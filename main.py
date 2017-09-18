@@ -1,3 +1,6 @@
+import numpy as np
+
+
 
 class Network:
     def __init__(self, name) :
@@ -13,6 +16,13 @@ class Network:
 
     def get_paricipants(self):
         return self.participant_list
+    
+    def calc_excess_energy(self, date_time, interval_min):
+        total = 0
+        for p in self.participant_list :
+            total += p.calc_net_export(date_time, interval_min)
+        return total
+
 
 mynetwork = Network('Byron')
 mynetwork.test()
@@ -26,7 +36,11 @@ class Participant:
     def print_attributes(self):
         print(self.participant_type, self.tariff_type, self.retailer)
 
-    def calc_net_export(self, time_stamp)
+    # TODO - make this work
+    def calc_net_export(self, date_time, interval_min):
+        return np.random.uniform(0,10) 
+
+    
 
 participant_1 = Participant('solar', 'A', 'ENOVA')
 participant_2 = Participant('load', 'B', 'ENOVA')
@@ -38,4 +52,7 @@ participant_list = mynetwork.get_paricipants()
 print(participant_list)
 
 for p in participant_list:
-    p.print_attributes()
+    print(p.calc_net_export(''))
+
+print(mynetwork.calc_excess_energy(''))
+
