@@ -25,3 +25,17 @@ class Battery:
 class Central_Battery(Battery):
     def __init__(self, cap_kWh, cap_kW, cycle_eff):
         Battery.__init__(self, cap_kWh, cap_kW, cycle_eff)
+    
+    def make_export_decision(self, net_participant_kWh):
+        """Takes amount of available energy (positive = can charge, negative = there is demand on the network). Makes a decision about whether to charge or discharge. 
+        Returns positive if discharging, negative if charging."""
+        # Case where there is energy available to charge
+        if net_participant_kWh >= 0 :
+            # Charge - note this returns what ever is left over after charging
+            return (net_participant_kWh - self.charge(net_participant_kWh)) * -1
+        
+        # Case where there is demand on the network
+        else :
+            return self.discharge(abs(net_participant_kWh))
+        
+        
