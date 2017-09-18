@@ -39,7 +39,7 @@ class Participant:
     def calc_net_export(self, date_time, interval_min):
         return np.random.uniform(0,10) 
 
-class Central_Battery:
+class Battery:
     def __init__(self, cap_kWh, cap_kW, cycle_eff):
         """Make note: cycle efficiency must be between zero and one."""
         self.cap_kWh = cap_kWh
