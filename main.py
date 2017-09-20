@@ -29,7 +29,8 @@ data_output = {
     "df_net_export" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
     "df_network_energy_flows" : pd.DataFrame(index = time_periods, columns=['net_participant_export', 'central_battery_export', 'unallocated_local_solar']),
     "df_local_solar_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-    "df_participant_batt_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
+    "df_participant_batt_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+    "df_local_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
     }
 # print(data_output)
 
@@ -53,7 +54,7 @@ for time in time_periods:
     # Run local solar allocation algorithm
     # Initialise an empty df with column name net_export
     participants_list_sorted = pd.DataFrame(columns=['net_export'])
-    # Add net export data
+    # Add net export data for participants with load
     for p in mynetwork.get_participants():
         # Get data point from df_net_export df
         net_export = data_output['df_net_export'].loc[time, p.get_id()]
@@ -78,6 +79,9 @@ for time in time_periods:
         solar_allocation = float(available_solar) / float(num_remaining_participants)
         battery_allocation = float(available_batt) / float(num_remaining_participants)
 
+        # Initialise for use in second if statement
+        reject_solar = 0
+
         # For each participant with load, find how much of their allocated solar is consumed and calculate the leftover ('reject solar')
         for p in participants_list_sorted.index.values :
             if solar_allocation > 0:
@@ -93,6 +97,7 @@ for time in time_periods:
                 # Calculate the new solar allocation
                 solar_allocation = float(available_solar) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
+            # Allocate battery export when there is battery export and all solar has been used by this participant
             if battery_allocation > 0 and reject_solar <= 0 :
                 participant_batt_import = min(abs(battery_allocation), abs(participants_list_sorted.loc[p,'net_export']) - abs(local_solar_import))
                 data_output["df_participant_batt_import"].loc[time, p] = participant_batt_import
@@ -103,6 +108,41 @@ for time in time_periods:
     # Save any solar left over after the allocation process to df_network_energy_flows
     data_output["df_network_energy_flows"].loc[time, 'unallocated_local_solar'] = available_solar
 
+
+    # Run local load allocation algorithm (aka solar sales)
+    # Initialise an empty df with column name net export
+    solar_sales_participant_list = pd.DataFrame(columns = ['net_export'])
+    # Add net export data for participants with generation
+    for p in mynetwork.get_participants():
+        # Get data point from df_net_export df
+        net_export = data_output['df_net_export'].loc[time, p.get_id()]
+        # If there is generation (i.e. export > 0 ) add to list
+        if net_export > 0 :
+            solar_sales_participant_list.loc[p.get_id(), 'net_export'] = net_export
+    # Sort list of participants with load
+    solar_sales_participant_list = solar_sales_participant_list.sort_values('net_export')
+
+    # Calculate total load available in this time period
+    # TODO - central battery
+    available_load = 0
+    for col in data_output['df_net_export']:
+        net_export = data_output['df_net_export'].loc[time, col]
+        # NOTE available load is positive
+        if net_export < 0 :
+            available_load += abs(net_export)
+
+    # If there exists participant with solar, allocate load
+    if len(solar_sales_participant_list) != 0 :
+        num_remaining_participants = len(solar_sales_participant_list)
+        load_allocation = float(available_load) / float(num_remaining_participants)
+    
+        for p in solar_sales_participant_list.index.values :
+            if load_allocation > 0:
+                participant_solar_sale = min(abs(load_allocation), abs(solar_sales_participant_list.loc[p,'net_export']))
+                data_output["df_local_solar_sales"].loc[time, p] = participant_solar_sale
+                available_load -= participant_solar_sale
+                num_remaining_participants -= 1
+                load_allocation = float(available_load) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
 # print(participants_list_sorted)
 print(data_output)
