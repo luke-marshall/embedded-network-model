@@ -11,7 +11,7 @@ class Network:
     def add_participant(self, participant):
         self.participant_list.append(participant)
 
-    def get_paricipants(self):
+    def get_participants(self):
         return self.participant_list
     
     def calc_total_participant_export(self, date_time, interval_min):
