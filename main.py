@@ -2,10 +2,13 @@
 from network import Network
 from participant import Participant
 from battery import Battery, Central_Battery
+from tariffs import Tariffs
 import util
 import datetime
 import pandas as pd
 import numpy as np
+
+TIME_PERIOD_LENGTH_MINS = 30
 
 # Create a network
 mynetwork = Network('Byron')
@@ -22,6 +25,9 @@ mynetwork.add_participant(participant_2)
 battery_1 = Central_Battery(10.0, 5.0, 0.99)
 mynetwork.add_central_battery(battery_1)
 
+# Add tariffs
+my_tariffs = Tariffs('Test')
+
 # Generate a list of time periods in half hour increments
 time_periods = util.generate_dates_in_range(datetime.datetime.now() - datetime.timedelta(weeks = 4), datetime.datetime.now(), 30)
 # Make empty df
@@ -29,7 +35,7 @@ data_output = {
     "df_net_export" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
     "df_network_energy_flows" : pd.DataFrame(index = time_periods, columns=['net_participant_export', 'central_battery_export', 'unallocated_local_solar', 'unallocated_central_battery_load']),
     "df_local_solar_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-    "df_participant_batt_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+    "df_participant_central_batt_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
     "df_local_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
     "df_central_batt_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
     }
@@ -105,9 +111,9 @@ for time in time_periods:
 
             # Allocate battery export when there is battery export and all solar has been used by this participant
             if battery_allocation > 0 and reject_solar <= 0 :
-                participant_batt_import = min(abs(battery_allocation), abs(participants_list_sorted.loc[p,'net_export']) - abs(local_solar_import))
-                data_output["df_participant_batt_import"].loc[time, p] = participant_batt_import
-                available_batt -= participant_batt_import
+                participant_central_batt_import = min(abs(battery_allocation), abs(participants_list_sorted.loc[p,'net_export']) - abs(local_solar_import))
+                data_output["df_participant_central_batt_import"].loc[time, p] = participant_central_batt_import
+                available_batt -= participant_central_batt_import
                 battery_allocation = float(available_batt) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
                 
@@ -168,4 +174,39 @@ for time in time_periods:
     data_output["df_network_energy_flows"].loc[time, 'unallocated_central_battery_load'] = available_batt_charging_load        
 
 # print(participants_list_sorted)
-print(data_output)
+# print(data_output)
+
+# ----------------------------------------------------------------------------------------------------------------------------
+# Financial flows
+
+# Charges are positive (if earning money then negative). Revenue is positive when earning money.
+financial_output = {
+    "df_participant_variable_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+    "df_local_solar_import_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+    "df_central_batt_import_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+    "df_local_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+    "df_central_batt_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+    "df_fixed_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
+    }
+
+for time in time_periods:
+    # Calc each participant in/out kWh
+    for p in mynetwork.get_participants():
+
+        net_export = data_output["df_net_export"].loc[time,p.get_id()]
+        local_solar_import = data_output["df_local_solar_import"].loc[time,p.get_id()]
+        participant_central_batt_import = data_output["df_participant_central_batt_import"].loc[time,p.get_id()]
+        local_solar_sales = data_output["df_local_solar_sales"].loc[time,p.get_id()]
+        central_batt_solar_sales = data_output["df_central_batt_solar_sales"].loc[time,p.get_id()]
+
+        external_grid_import = abs(min(net_export,0)) - abs(max(0,local_solar_import)) - abs(max(0,participant_central_batt_import))
+
+        financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = my_tariffs.get_variable_tariff(time) * external_grid_import
+        financial_output["df_local_solar_import_charge"].loc[time,p.get_id()] = my_tariffs.get_local_solar_tariff(time) * local_solar_import
+        financial_output["df_central_batt_import_charge"].loc[time,p.get_id()] = my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import
+        financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_tariff(time) * local_solar_sales
+        financial_output["df_central_batt_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_central_batt_buy_tariff(time) * central_batt_solar_sales
+        financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS)
+
+
+print(financial_output)
