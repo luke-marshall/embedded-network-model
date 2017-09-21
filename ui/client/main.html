@@ -1,0 +1,48 @@
+<head>
+  <title>EN Network Model</title>
+</head>
+
+<body>
+  <h1>Embedded Network Model</h1>
+
+  {{> hello}}
+  {{> info}}
+</body>
+
+<template name="hello">
+  <!-- <form class='add_participant'> -->
+    Identification number <input type='test' name='id_num' id='id_num' placeholder="1" value="1">
+    Participant name <input type='text' name='participant_name' id='participant_name' placeholder='Fred' value="Fred">
+    Solar capacity (kW) <input type='text' name='solar_capacity' id='solar_capacity' placeholder='4' value="4">
+    Battery export limit (kW) <input type='text' name='battery_export_limit' id='battery_export_limit' placeholder='4' value="4">
+    Battery capacity (kWh) <input type='text' name='battery_capacity' id='battery_capacity' placeholder='4' value="4">
+    Enova customer? (Y/N) <input type='test' name='enova_customer_flag' id='enova_customer_flag' placeholder="Y" value="Y">
+    Retail tariff <input type='test' name='retail_tariff' id='retail_tariff' placeholder="Enova flat commercial" value="Enova flat commercial">
+    <button type='submit'>Add participant</button>
+  <!-- </form> -->
+  
+  <p>You've pressed the button {{counter}} times.</p>
+  <!-- <div id="chart"></div> -->
+  {{#each participant in participants}}
+    <div>
+      Participant id number: {{participant.id_num}}
+      Name: {{participant.name}}
+      Solar capacity: {{participant.solar_capacity}}
+      Battery export limit (kW): {{participant.battery_export_limit}}
+      Battery capacity: {{participant.battery_capacity}}
+      Enova customer? (Y/N): {{participant.enova_customer_flag}}
+      Retail tariff: {{participant.retail_tariff}}
+    </div>
+  {{/each}}
+
+</template>
+
+<template name="info">
+  <h2>Learn Meteor!</h2>
+  <ul>
+    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
+    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
+    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
+    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
+  </ul>
+</template>
