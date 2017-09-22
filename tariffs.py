@@ -22,19 +22,27 @@ class Tariffs :
     def get_fixed_tariff(self, fixed_period_minutes):
         return 1.20 * (fixed_period_minutes/(60*24))
 
-    # Things the network is paid
+    # Things the network is paid (fixed DUOS charges, variable DUOS charges, local solar DUOS charges, central battery DUOS charges)
     # Apply to amounts consumer each time period then sum for total network income
-    def get_duos_on_grid_import(self,date_time):
+    # May need to also look at TUOS charges for grid consumption
+    def get_duos_on_grid_import_fixed(self,fixed_period_minutes):
         return 0.10
-    
+
+    def get_duos_on_grid_import_variable(self,date_time):
+        return 0.10    
+
     def get_duos_on_local_solar_import(self,date_time):
         return 0.08
 
     def get_duos_on_central_batt_import(self,date_time):
         return 0.08
 
-    # Things the retailer is paid
-    def get_retail_income_on_grid_import(self,date_time):
+    # Things the retailer is paid (fixed retail charges, variable retail charges, local solar retail charges, central battery retail charges)
+    # Maybe unnecessary - could possibly subtract network income from customer bill
+    def get_retail_income_on_grid_import_fixed(self,fixed_period_minutes):
+        return 0.10
+
+    def get_retail_income_on_grid_import_variable(self,date_time):
         return 0.05
     
     def get_retail_income_on_local_solar_import(self,date_time):

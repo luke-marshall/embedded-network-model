@@ -1,0 +1,42 @@
+
+.page-content{
+    display:flex;
+    flex-direction: row;
+}
+.sidebar{
+    max-width: 20%
+}
+
+.inputs-outputs{
+    /* max-width:70%;
+    min-width:70%; */
+    display:flex;
+    flex-direction: column;
+}
+
+.add-participant-form{
+    display:flex;
+    flex-direction: column;
+}
+
+.participant-form-item{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 2%;
+    margin-right:2%;
+    margin-top:0.5vh;
+    
+}
+
+.participant-form-item input {
+    max-width: 30%;
+}
+
+.participant_table{
+    background-color:#DFC456;
+}
+
+.graph-content{
+    min-width:100%;
+}
