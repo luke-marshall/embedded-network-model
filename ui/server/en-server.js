@@ -1,9 +1,10 @@
 Meteor.methods({
-    'runSimulation':function(){
+    'runSimulation': function() {
         var syncHTTP = Meteor.wrapAsync(HTTP.get);
         var url = "http://127.0.0.1:5000/";
-        var result = syncHTTP(url,{});
+        var result = syncHTTP(url, {});
         console.log(result);
-        return JSON.parse(result.content);
+        return result.content;
+        // return JSON.parse(result.content);
     }
 });

@@ -15,13 +15,13 @@ Template.hello.helpers({
     counter() {
         return Template.instance().counter.get();
     },
-    retail_tariffs(){
+    retail_tariffs() {
         return ['Retail Tariff 1', 'Retail Tariff 2', 'Retail Tariff 3'];
     },
-    network_tariffs(){
+    network_tariffs() {
         return ['Network Tariff 1', 'Network Tariff 2', 'Network Tariff 3'];
     }
-    
+
 });
 
 Template.participants.helpers({
@@ -42,10 +42,10 @@ Template.hello.events({
         var battery_capacity = $('#battery_capacity').val();
         var enova_customer_flag = $('#enova_customer_flag').val();
         var retail_tariff = $('[name=retail_tariff_selector]').val();
-       
+
         // retail_tariff = tmpl.find('#retail_tariff_selector :selected');
 
-        
+
         // console.log(battery_capacity)
         instance.counter.set(instance.counter.get() + 1);
         var participants = Session.get("participants");
@@ -62,10 +62,11 @@ Template.hello.events({
         Session.set("participants", participants);
     },
 
-    'click #run-simulation'(event, instance){
+    'click #run-simulation' (event, instance) {
         console.log('Running Simulation')
-        Meteor.call('runSimulation', function(error, res){
+        Meteor.call('runSimulation', function(error, res) {
             console.log(res);
+            console.log(JSON.parse(res))
         });
     }
 });

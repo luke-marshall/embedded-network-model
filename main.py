@@ -32,7 +32,7 @@ def run_en():
     my_tariffs = Tariffs('Test')
 
     # Generate a list of time periods in half hour increments
-    time_periods = util.generate_dates_in_range(datetime.datetime.now() - datetime.timedelta(weeks = 4), datetime.datetime.now(), 30)
+    time_periods = util.generate_dates_in_range(datetime.datetime.now() - datetime.timedelta(days = 2), datetime.datetime.now(), 30)
     # Make empty df
     data_output = {
         "df_net_export" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
@@ -221,22 +221,60 @@ def run_en():
     # financial_output["df_participant_variable_charge"].reindex(index=new_indices)
     # print (financial_output["df_participant_variable_charge"])
     
-    for key in financial_output:
-        financial_output[key].index = financial_output[key].index.to_series().astype(str)
-    for key in data_output:
-        data_output[key].index = data_output[key].index.to_series().astype(str)
+    # for key in financial_output:
+    #     financial_output[key].index = financial_output[key].index.to_series().astype(str)
+    # for key in data_output:
+    #     data_output[key].index = data_output[key].index.to_series().astype(str)
     
-    # print(financial_output)
+    # # print(financial_output)
 
-    for key in financial_output:
-        financial_output[key] = financial_output[key].T.to_dict('index')
+    # for key in financial_output:
+    #     financial_output[key] = financial_output[key].T.to_dict('index')
 
-    for key in data_output:
-        data_output[key] = data_output[key].T.to_dict('index')
+    # for key in data_output:
+    #     data_output[key] = data_output[key].T.to_dict('index')
 
+    # new_financial_output = {}
     return {'financial_output':financial_output, 'data_output':data_output}
+
+def run_en_json():
+    result = run_en()
+
+    financial_output = result['financial_output']
+    data_output = result['data_output']
+
+    new_financial_output = {}
+    for key in financial_output:
+        new_financial_output[key]=[]
+        for date, row in financial_output[key].T.iteritems():
+            row_dict = {'dt_str':str(date)}
+            for col_header in financial_output[key]:
+                row_dict[col_header] = float(row[col_header]) if type(row[col_header]) == "float" else 0
+            new_financial_output[key].append(row_dict)    
+                # print col_header+": "+str(row[col_header])
+    
+
+    new_energy_output = {}
+    for key in data_output:
+        new_energy_output[key]=[]
+        for date, row in data_output[key].T.iteritems():
+            row_dict = {'dt_str':str(date)}
+            for col_header in data_output[key]:
+                row_dict[col_header] = float(row[col_header]) if type(row[col_header]) == "float" else 0
+            
+                # print col_header+": "+str(row[col_header])
+            new_energy_output[key].append(row_dict)
+
+   
+    
+    return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
+
+    
 
 # print(run_en())
 
-pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(run_en())
+# pp = pprint.PrettyPrinter(indent=4)
+# pp.pprint(run_en())
+
+# print run_en_json()
+
