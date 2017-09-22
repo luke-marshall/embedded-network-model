@@ -5,53 +5,110 @@
 <body>
     <h1>Embedded Network Model</h1>
 
-    {{> hello}} {{> info}} {{> graph}}
+    <div class="page-content">
+      <div class="sidebar">
+          {{> hello}}
+
+
+      </div>
+
+      <div class="input-output"> 
+         {{> participants}}
+         {{> graph}}
+      </div>
+    </div>
+     
 </body>
 
 <template name="hello">
-  <!-- <form class='add_participant'> -->
-    Identification number <input type='test' name='id_num' id='id_num' placeholder="1" value="1">
-    Participant name <input type='text' name='participant_name' id='participant_name' placeholder='Fred' value="Fred">
-    Solar capacity (kW) <input type='text' name='solar_capacity' id='solar_capacity' placeholder='4' value="4">
-    Battery export limit (kW) <input type='text' name='battery_export_limit' id='battery_export_limit' placeholder='4' value="4">
-    Battery capacity (kWh) <input type='text' name='battery_capacity' id='battery_capacity' placeholder='4' value="4">
-    Enova customer? (Y/N) <input type='test' name='enova_customer_flag' id='enova_customer_flag' placeholder="Y" value="Y">
-    Retail tariff <input type='test' name='retail_tariff' id='retail_tariff' placeholder="Enova flat commercial" value="Enova flat commercial">
-    <button type='submit'>Add participant</button>
-  <!-- </form> -->
+
   
-  <p>You've pressed the button {{counter}} times.</p>
-  <!-- <div id="chart"></div> -->
-  {{#each participant in participants}}
-    <div>
-      Participant id number: {{participant.id_num}}
-      Name: {{participant.name}}
-      Solar capacity: {{participant.solar_capacity}}
-      Battery export limit (kW): {{participant.battery_export_limit}}
-      Battery capacity: {{participant.battery_capacity}}
-      Enova customer? (Y/N): {{participant.enova_customer_flag}}
-      Retail tariff: {{participant.retail_tariff}}
+  <!-- <form class='add_participant'> -->
+    <div class="add-participant-form">
+
+      <div class="participant-form-item">
+        Identification number <input type='test' name='id_num' id='id_num' placeholder="1" value="1">
+      </div>
+      <div class="participant-form-item">
+        Participant name <input type='text' name='participant_name' id='participant_name' placeholder='Fred' value="Fred">
+      </div>
+      <div class="participant-form-item">
+       Solar capacity (kW) <input type='text' name='solar_capacity' id='solar_capacity' placeholder='4' value="4">
+      </div>
+      <div class="participant-form-item">
+       Battery export limit (kW) <input type='text' name='battery_export_limit' id='battery_export_limit' placeholder='4' value="4">
+      </div>
+      <div class="participant-form-item">
+        Battery capacity (kWh) <input type='text' name='battery_capacity' id='battery_capacity' placeholder='4' value="4">
+      </div>
+      <div class="participant-form-item">
+       Enova customer? (Y/N) <input type='test' name='enova_customer_flag' id='enova_customer_flag' placeholder="Y" value="Y">
+      </div>
+      <div class="participant-form-item">
+        <select name="retail-tariff-selector"  id="retail-tariff-selector" class="form-control" value="{{retail_tariffs.[0]}}">
+        {{#each tariff in retail_tariffs}}
+          <option value="{{tariff}}">{{tariff}}</option>
+        {{/each}}
+        </select>
+
+       <!-- Retail tariff <input type='test' name='retail_tariff' id='retail_tariff' placeholder="Enova flat commercial" value="Enova flat commercial"> -->
+      </div>
+      <div class="participant-form-item">
+          <select name="network-tariff-selector" class="form-control" value="{{network_tariffs.[0]}}">
+          {{#each tariff in network_tariffs}}
+            <option value="{{tariff}}">{{tariff}}</option>
+          {{/each}}
+          </select>
+        </div>
+      <div class="participant-form-item">
+       <button type='submit'>Add participant</button>
+      </div>
+
+      <div class="btn btn-success" id="run-simulation">Run Simulation</div>
     </div>
-  {{/each}}
+  <!-- </form> -->
+
 
 </template>
 
-<template name="info">
-  <h2>Learn Meteor!</h2>
-  <ul>
-    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
-    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
-    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
-    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
-  </ul>
+<template name="participants">
+  <div class="participant_table">
+    <h2>Participants</h2>
+    <table style="width:100%"  class="participant_table_table">
+        <tr>
+            <th>Participant id number</th>
+            <th>Name:</th> 
+            <th>Solar capacity</th>
+            <th>Battery export limit (kW)</th>
+            <th>Battery capacity</th>
+            <th> Enova customer? (Y/N)</th>
+            <th> Retail tariff</th>
+            <th> Network tariff</th>
+          </tr>
+            {{#each participant in participants}}
+            <tr>
+              <td>{{participant.id_num}}</td>
+              <td>{{participant.name}}</td>
+              <td>{{participant.solar_capacity}}</td>
+              <td>{{participant.battery_export_limit}}</td>
+              <td>{{participant.battery_capacity}}</td>
+              <td>{{participant.enova_customer_flag}}</td>
+              <td>{{participant.retail_tariff}}</td>
+              <td>{{participant.network_tariff}}</td>
+            </tr>
+             {{/each}}
+    </table>
+
+  </div>
+
 </template>
+
 
 <template name="graph">
-  Graph Goes Here!
-  <div id="content">
+  <div id="content" class="graph-content">
     
       <form id="side_panel">
-        <h1>Random Data in the Future</h1>
+        <h2>Energy Flow</h2>
         <section><div id="legend"></div></section>
         <section>
           <div id="renderer_form" class="toggler">

@@ -7,6 +7,7 @@ import util
 import datetime
 import pandas as pd
 import numpy as np
+import pprint
 
 def run_en():
         
@@ -188,7 +189,9 @@ def run_en():
         "df_central_batt_import_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
         "df_local_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
         "df_central_batt_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_fixed_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
+        "df_fixed_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_dnsp_revenue" : pd.DataFrame(index = time_periods, columns=['grid_import_revenue_fixed','total_participant_grid_import_kWh','grid_import_revenue_variable','total_participant_local_solar_import_kWh','local_solar_import_revenue','total_participant_central_battery_import_kWh','central_batterY_import_revenue']),
+        "df_retailer_revenue" : pd.DataFrame(index = time_periods, columns=['grid_import_revenue_fixed','total_participant_grid_import_kWh','grid_import_revenue_variable','total_participant_local_solar_import_kWh','local_solar_import_revenue','total_participant_central_battery_import_kWh','central_batterY_import_revenue'])
         }
 
     for time in time_periods:
@@ -211,9 +214,29 @@ def run_en():
             financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS)
 
 
+    # dts = financial_output["df_participant_variable_charge"].index.values.tolist()
+    # print dts
+    # new_indices = [dt.isoformat() for dt in dts]
+    # financial_output["df_participant_variable_charge"].reset_index
+    # financial_output["df_participant_variable_charge"].reindex(index=new_indices)
+    # print (financial_output["df_participant_variable_charge"])
+    
+    for key in financial_output:
+        financial_output[key].index = financial_output[key].index.to_series().astype(str)
+    for key in data_output:
+        data_output[key].index = data_output[key].index.to_series().astype(str)
+    
+    # print(financial_output)
 
-    print(financial_output)
+    for key in financial_output:
+        financial_output[key] = financial_output[key].T.to_dict('index')
 
-    return financial_output, data_output
+    for key in data_output:
+        data_output[key] = data_output[key].T.to_dict('index')
 
-# run_en()
+    return {'financial_output':financial_output, 'data_output':data_output}
+
+# print(run_en())
+
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(run_en())
