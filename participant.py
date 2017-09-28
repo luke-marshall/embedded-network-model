@@ -3,14 +3,16 @@ import pandas as pd
 import datetime
 
 class Participant: 
-    def __init__(self, participant_id, participant_type, tariff_type, retailer):
+    # Need to update to have both network and retail tariffs as inputs
+    def __init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type,retailer):
         self.participant_id = participant_id
         self.participant_type = participant_type
-        self.tariff_type = tariff_type
+        self.retail_tariff_type = retail_tariff_type
+        self.network_tariff_type = network_tariff_type
         self.retailer = retailer
     
     def print_attributes(self):
-        print(self.participant_type, self.tariff_type, self.retailer)
+        print(self.participant_type, self.retail_tariff_type, self.network_tariff_type, self.retailer)
 
     # TODO - make this work
     def calc_net_export(self, date_time, interval_min):
@@ -18,6 +20,12 @@ class Participant:
 
     def get_id(self):
         return self.participant_id
+
+    def get_retail_tariff_type(self):
+        return self.retail_tariff_type
+
+    def get_network_tariff_type(self):
+        return self.network_tariff_type
 
 class CSV_Participant(Participant):
     def __init__(self, participant_id, participant_type, tariff_type, retailer, solar_path, load_path, solar_capacity):
