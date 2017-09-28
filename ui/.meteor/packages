@@ -25,3 +25,4 @@ mrt:jquery-ui
 twbs:bootstrap
 brylie:rickshaw
 http
+momentjs:moment

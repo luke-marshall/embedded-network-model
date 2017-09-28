@@ -22,8 +22,6 @@ class Participant:
 class CSV_Participant(Participant):
     def __init__(self, participant_id, participant_type, tariff_type, retailer, solar_path, load_path, solar_capacity):
         Participant.__init__(self, participant_id, participant_type, tariff_type, retailer)
-        self.solar_path = solar_path
-        self.load_path = load_path
         solar_data = pd.read_csv(solar_path,index_col = 'HHE', parse_dates=True)
         load_data = pd.read_csv(load_path,index_col = 'date_time', parse_dates=True)
         # Delete all cols not relevant to this participant

@@ -1,6 +1,6 @@
 
 from network import Network
-from participant import Participant
+from participant import Participant, CSV_Participant
 from battery import Battery, Central_Battery
 from tariffs import Tariffs
 import util
@@ -17,12 +17,18 @@ def run_en():
     mynetwork = Network('Byron')
 
     # Create participants
-    participant_1 = Participant('building_1','solar', 'A', 'ENOVA')
-    participant_2 = Participant('building_2','load', 'B', 'ENOVA')
+    # participant_1 = Participant('building_1','solar', 'A', 'ENOVA')
+    # participant_2 = Participant('building_2','load', 'B', 'ENOVA')
+    # participant_3 = Participant('building_3','load', 'B', 'ENOVA')
 
+    participant_1 = CSV_Participant('participant_1','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_2 = CSV_Participant('participant_2','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_3 = CSV_Participant('participant_3','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+   
     # Add participants to network
     mynetwork.add_participant(participant_1)
     mynetwork.add_participant(participant_2)
+    mynetwork.add_participant(participant_3)
 
     # Add a central battery
     battery_1 = Central_Battery(10.0, 5.0, 0.99)
@@ -32,7 +38,7 @@ def run_en():
     my_tariffs = Tariffs('Test')
 
     # Generate a list of time periods in half hour increments
-    time_periods = util.generate_dates_in_range(datetime.datetime.now() - datetime.timedelta(days = 2), datetime.datetime.now(), 30)
+    time_periods = util.generate_dates_in_range(datetime.datetime(year=2017,month=2,day=27,hour=1) , datetime.datetime(year=2017,month=2,day=27,hour=1) + datetime.timedelta(days = 1), 30)
     # Make empty df
     data_output = {
         "df_net_export" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
@@ -249,7 +255,7 @@ def run_en_json():
         for date, row in financial_output[key].T.iteritems():
             row_dict = {'dt_str':str(date)}
             for col_header in financial_output[key]:
-                row_dict[col_header] = float(row[col_header]) if type(row[col_header]) == "float" else 0
+                row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
             new_financial_output[key].append(row_dict)    
                 # print col_header+": "+str(row[col_header])
     
@@ -260,7 +266,7 @@ def run_en_json():
         for date, row in data_output[key].T.iteritems():
             row_dict = {'dt_str':str(date)}
             for col_header in data_output[key]:
-                row_dict[col_header] = float(row[col_header]) if type(row[col_header]) == "float" else 0
+                row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
             
                 # print col_header+": "+str(row[col_header])
             new_energy_output[key].append(row_dict)
