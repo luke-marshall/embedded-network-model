@@ -24,7 +24,6 @@ class Tariffs :
 
     # Things the network is paid (fixed DUOS charges, variable DUOS charges, local solar DUOS charges, central battery DUOS charges)
     # Apply to amounts consumer each time period then sum for total network income
-    # May need to also look at TUOS charges for grid consumption
     def get_duos_on_grid_import_fixed(self,fixed_period_minutes):
         return 0.10
 
@@ -36,6 +35,19 @@ class Tariffs :
 
     def get_duos_on_central_batt_import(self,date_time):
         return 0.08
+
+    # Transmission use of service charges - will presumably be zero for local solar and battery import
+    def get_tuos_on_grid_import_fixed(self,fixed_period_minutes):
+        return 0.05
+
+    def get_tuos_on_grid_import_variable(self,date_time):
+        return 0.05    
+
+    def get_tuos_on_local_solar_import(self,date_time):
+        return 0.04
+
+    def get_tuos_on_central_batt_import(self,date_time):
+        return 0.04
 
     # Things the retailer is paid (fixed retail charges, variable retail charges, local solar retail charges, central battery retail charges)
     # Maybe unnecessary - could possibly subtract network income from customer bill
