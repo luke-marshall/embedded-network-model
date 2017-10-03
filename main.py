@@ -372,7 +372,7 @@ def run_en():
             
             # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
             if network_tariff_type == 'Small Business - Opt in Demand' :
-                # TODO - BOOKMARK
+                # TODO - BOOKMARK - need to complete this section.
 
 
         # Finally, calculate the sum.
