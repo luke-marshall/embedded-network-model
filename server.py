@@ -9,10 +9,21 @@ import json
 # test
 @app.route("/")
 def hello():
-    print request.get_json()
-    result = main.run_en_json()
+    print type(request.get_json())
+    scenario = {
+        'participants':request.get_json()
+        }
+    result = main.run_en_json(scenario)
     # return json.dumps(result)
     return jsonify(result)
+
+@app.route("/participantNames")
+def participantNames():
+    result = main.getParticipantNames()
+    # return json.dumps(result)
+    return jsonify(result)
+
+
 
 
 @app.errorhandler(404)

@@ -8,8 +8,17 @@ import datetime
 import pandas as pd
 import numpy as np
 import pprint
+import csv
 
-def run_en():
+DEFAULT_LOAD_DATA_PATH = "data/essential_load_data_aie_26_feb_1_may.csv"
+def getParticipantNames():
+    f = open(DEFAULT_LOAD_DATA_PATH, 'rb')
+    reader = csv.reader(f)
+    headers = reader.next()
+    headers.remove('date_time')
+    return headers
+
+def run_en(scenario= None):
         
     TIME_PERIOD_LENGTH_MINS = 30
 
@@ -20,15 +29,16 @@ def run_en():
     # participant_1 = Participant('building_1','solar', 'A', 'ENOVA')
     # participant_2 = Participant('building_2','load', 'B', 'ENOVA')
     # participant_3 = Participant('building_3','load', 'B', 'ENOVA')
-
+    
     participant_1 = CSV_Participant('participant_1','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
     participant_2 = CSV_Participant('participant_2','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
     participant_3 = CSV_Participant('participant_3','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-   
+
     # Add participants to network
     mynetwork.add_participant(participant_1)
     mynetwork.add_participant(participant_2)
     mynetwork.add_participant(participant_3)
+   
 
     # Add a central battery
     battery_1 = Central_Battery(10.0, 5.0, 0.99)
@@ -243,8 +253,8 @@ def run_en():
     # new_financial_output = {}
     return {'financial_output':financial_output, 'data_output':data_output}
 
-def run_en_json():
-    result = run_en()
+def run_en_json(scenario=None):
+    result = run_en(scenario)
 
     financial_output = result['financial_output']
     data_output = result['data_output']
