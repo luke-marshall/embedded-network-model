@@ -17,8 +17,8 @@ def run_en():
     mynetwork = Network('Byron')
 
     # Create participants
-    participant_1 = Participant('building_1','solar','Business Anytime','LV Small Business Anytime', 'ENOVA')
-    participant_2 = Participant('building_2','load','Business Anytime','LV Small Business Anytime', 'ENOVA')
+    participant_1 = Participant('building_1','solar','Controlled Load 1','LV Small Business Anytime', 'ENOVA')
+    participant_2 = Participant('building_2','load','Controlled Load 1','LV Small Business Anytime', 'ENOVA')
 
     # Add participants to network
     mynetwork.add_participant(participant_1)
@@ -45,6 +45,7 @@ def run_en():
         "df_external_grid_elec_import": pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
         }
     # print(data_output)
+
 
 
 
@@ -183,7 +184,7 @@ def run_en():
             local_solar_sales = data_output["df_local_solar_sales"].loc[time,p.get_id()]
             central_battery_solar_sales = data_output["df_central_batt_solar_sales"].loc[time,p.get_id()]
             # Calc and save to df
-            export_to_grid_solar_sales = max(0,net_export) - max(0,solar_sold_locally) - max(0,central_battery_solar_sales)
+            export_to_grid_solar_sales = max(0,net_export) - max(0,local_solar_sales) - max(0,central_battery_solar_sales)
             data_output["df_export_to_grid_solar_sales"].loc[time,p.get_id()] = export_to_grid_solar_sales
             
             # Then, electricity import from grid
@@ -222,6 +223,9 @@ def run_en():
         "df_central_battery_revenue" : pd.DataFrame(index = time_periods, columns=['central_battery_revenue'])
         }
 
+    # Initialise block tariff counter for use in applying the block tariffs
+    total_usage_today = 0
+
     for time in time_periods:
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
@@ -249,24 +253,32 @@ def run_en():
             
             # Variable charge - may be TOU, demand, inclining block etc...
             # First, get the tariff, then apply
-            # The line immediately below this comment is doing a simple flat tariff calc.
-            financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = my_tariffs.get_variable_tariff(time,retail_tariff_type) * external_grid_import
+            # The line immediately below this comment is doing a simple flat tariff calc. Currently doesn't work since get_variable_tariff returns a tuple.
+            # financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = my_tariffs.get_variable_tariff(time,retail_tariff_type) * external_grid_import
             
-            # if tariff_type == 'Business Anytime':
-            #     block_1_charge, block_2_charge, block_1_volume = my_tariffs.get_variable_tariff(time,retail_tariff_type)
-            #     # Sum total kWh for each day
-            #     # TODO!!
+            # The block tariffs will be applied by counting the volume of energy used within the period and applying the appropriate tariff accordingly
+            if retail_tariff_type == 'Business Anytime':
+                block_1_charge, block_2_charge, block_1_volume = my_tariffs.get_variable_tariff(time,retail_tariff_type)
 
-            # if tariff_type == 'Business TOU':
+                # First, is it a new day? i.e. if midnight, then reset the counter
+                if time.time() == time(0,0):
+                    total_usage_today = 0
+                else:
+                    total_usage_today += external_grid_import
+                    # BOOK MARK
+                
+
+            # The TOU tariffs will be applied by using if statements to determine whether peak/shoulder/off-peak
+            # if retail_tariff_type == 'Business TOU':
             #     peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2 = my_tariffs.get_variable_tariff(time,retail_tariff_type)
             #     # Find which time period this time is in and use the relevant tariff.
             #     # TODO!!
 
-            # if tariff_type == 'Controlled Load 1':
-            #     variable_tariff = (controlled_load)
+            # The controlled load tariffs and the flat tariff will be applied simple as the tariff times by the volume of electricity consumed, so the same calculation is applied.
+            if retail_tariff_type == 'Controlled Load 1' or retail_tariff_type == 'Controlled Load 2' or retail_tariff_type == 'flat_charge':
+                variable_tariff = my_tariffs.get_variable_tariff(time, retail_tariff_type)
+                financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = variable_tariff * external_grid_import
             
-            # if tariff_type == 'Controlled Load 2':
-            #     variable_tariff = (controlled_load)
 
         # Required energy flows for retailer / DNSP / TNSP calcs
         gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 

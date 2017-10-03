@@ -11,32 +11,32 @@ class Tariffs :
         # Get tariff data (note tuos not considered as yet)
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
-        print(self.retail_tariff_data)
-        print(self.duos_tariff_data)
+        # print(self.retail_tariff_data)
+        # print(self.duos_tariff_data)
     
     def get_variable_tariff(self, date_time, tariff_type):
         """Variable tariff component from retail tariff data."""
         # Get data from df
-        flat_charge = self.retail_tariff_data[tariff_type,'flat_charge']
-        peak_charge	= self.retail_tariff_data[tariff_type,'peak_charge']
-        shoulder_charge	= self.retail_tariff_data[tariff_type,'shoulder_charge']
-        offpeak_charge = self.retail_tariff_data[tariff_type,'offpeak_charge']
-        block_1_charge = self.retail_tariff_data[tariff_type,'block_1_charge']
-        block_2_charge = self.retail_tariff_data[tariff_type,'block_2_charge']
-        controlled_load	= self.retail_tariff_data[tariff_type,'controlled_load']
-        peak_start_time	= self.retail_tariff_data[tariff_type,'peak_start_time']
-        peak_end_time = self.retail_tariff_data[tariff_type,'peak_end_time']
-        peak_start_time_2 = self.retail_tariff_data[tariff_type,'peak_start_time_2']
-        peak_end_time_2	= self.retail_tariff_data[tariff_type,'peak_end_time_2']
-        shoulder_start_time	= self.retail_tariff_data[tariff_type,'shoulder_start_time']
-        shoulder_end_time = self.retail_tariff_data[tariff_type,'shoulder_end_time']
-        shoulder_start_time_2 = self.retail_tariff_data[tariff_type,'shoulder_start_time_2']
-        shoulder_end_time_2	= self.retail_tariff_data[tariff_type,'shoulder_end_time_2']
-        block_1_volume = self.retail_tariff_data[tariff_type,'block_1_volume']
-        block_2_volume = self.retail_tariff_data[tariff_type,'block_2_volume']
-        demand_charge = self.retail_tariff_data[tariff_type,'demand']
+        flat_charge = self.retail_tariff_data.loc[tariff_type,'flat_charge']
+        peak_charge	= self.retail_tariff_data.loc[tariff_type,'peak_charge']
+        shoulder_charge	= self.retail_tariff_data.loc[tariff_type,'shoulder_charge']
+        offpeak_charge = self.retail_tariff_data.loc[tariff_type,'offpeak_charge']
+        block_1_charge = self.retail_tariff_data.loc[tariff_type,'block_1_charge']
+        block_2_charge = self.retail_tariff_data.loc[tariff_type,'block_2_charge']
+        controlled_load	= self.retail_tariff_data.loc[tariff_type,'controlled_load']
+        peak_start_time	= self.retail_tariff_data.loc[tariff_type,'peak_start_time']
+        peak_end_time = self.retail_tariff_data.loc[tariff_type,'peak_end_time']
+        peak_start_time_2 = self.retail_tariff_data.loc[tariff_type,'peak_start_time_2']
+        peak_end_time_2	= self.retail_tariff_data.loc[tariff_type,'peak_end_time_2']
+        shoulder_start_time	= self.retail_tariff_data.loc[tariff_type,'shoulder_start_time']
+        shoulder_end_time = self.retail_tariff_data.loc[tariff_type,'shoulder_end_time']
+        shoulder_start_time_2 = self.retail_tariff_data.loc[tariff_type,'shoulder_start_time_2']
+        shoulder_end_time_2	= self.retail_tariff_data.loc[tariff_type,'shoulder_end_time_2']
+        block_1_volume = self.retail_tariff_data.loc[tariff_type,'block_1_volume']
+        block_2_volume = self.retail_tariff_data.loc[tariff_type,'block_2_volume']
+        demand_charge = self.retail_tariff_data.loc[tariff_type,'demand']
         
-        # May need to rethink for general case / open source model. Could just apply all fields to each participant and the fields with zero won't do anything... computationally slow? If statements are just as bad?
+
         if tariff_type == 'Business Anytime':
             variable_tariff = (block_1_charge, block_2_charge, block_1_volume)
 
@@ -147,5 +147,5 @@ class Tariffs :
 
 
 test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test")
-print(test_tariff.get_fixed_tariff(30,'Business Anytime'))
+print(test_tariff.get_variable_tariff(30,'Business TOU'))
 
