@@ -15,7 +15,7 @@ def getParticipantNames():
     f = open(DEFAULT_LOAD_DATA_PATH, 'rb')
     reader = csv.reader(f)
     headers = reader.next()
-    headers.remove('date_time')
+    headers.remove("date_time")
     return headers
 
 def run_en(scenario= None):

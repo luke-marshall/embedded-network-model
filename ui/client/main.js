@@ -3,15 +3,21 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import './main.html';
 
-Template.hello.onCreated(function helloOnCreated() {
+Template.sidebar.onCreated(function sidebarOnCreated() {
     // counter starts at 0
     this.counter = new ReactiveVar(0);
     Session.set('simulationRunning', false);
     Session.set("participants", []);
     Session.set('simulationData', null)
+    Session.set('participantNames', []);
+
+    Meteor.call('participantNames', function(err, res) {
+        console.log(res);
+        Session.set('participantNames', res);
+    });
 });
 
-Template.hello.helpers({
+Template.sidebar.helpers({
     counter() {
         return Template.instance().counter.get();
     },
@@ -23,6 +29,9 @@ Template.hello.helpers({
     },
     simulationRunning() {
         return Session.get('simulationRunning');
+    },
+    participantNames() {
+        return Session.get('participantNames');
     }
 
 });
@@ -34,7 +43,7 @@ Template.participants.helpers({
     },
 });
 
-Template.hello.events({
+Template.sidebar.events({
     'click button' (event, instance) {
         console.log('Clicked the button!')
             // increment the counter when button is clicked
@@ -46,12 +55,14 @@ Template.hello.events({
         var enova_customer_flag = $('#enova_customer_flag').val();
         var retail_tariff = $('#retail-tariff-selector').val();
         var network_tariff = $('#network-tariff-selector').val();
+        var participant_id = $('#particpant-id-selector').val();
 
         instance.counter.set(instance.counter.get() + 1);
         var participants = Session.get("participants");
 
         participants.push({
             id_num: id_num,
+            participant_id: participant_id,
             name: name,
             solar_capacity: solar_capacity,
             battery_export_limit: battery_export_limit,

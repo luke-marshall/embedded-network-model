@@ -21,6 +21,8 @@ def hello():
 def participantNames():
     result = main.getParticipantNames()
     # return json.dumps(result)
+    # result = json.dumps(result)
+    # result = {'ids': result}
     return jsonify(result)
 
 

@@ -7,7 +7,7 @@
 
     <div class="page-content">
         <div class="sidebar prettybox">
-            {{> hello}}
+            {{> sidebar}}
 
 
         </div>
@@ -19,13 +19,18 @@
 
 </body>
 
-<template name="hello">
+<template name="sidebar">
 
   <!-- <form class='add_participant'> -->
     <div class="add-participant-form">
 
       <div class="participant-form-item">
-        Identification number <input type='test' name='id_num' id='id_num' placeholder="1" value="1">
+        
+        <select name="particpant-id-selector" id="particpant-id-selector" class="form-control" value="participantNames.[0]">
+          {{#each name in participantNames}}
+          <option value="{{name}}">ID: {{name}}</option>
+          {{/each}}
+        </select>
       </div>
       <div class="participant-form-item">
         Participant name <input type='text' name='participant_name' id='participant_name' placeholder='Fred' value="Fred">
@@ -93,7 +98,7 @@
           </tr>
             {{#each participant in participants}}
             <tr>
-              <td>{{participant.id_num}}</td>
+              <td>{{participant.participant_id}}</td>
               <td>{{participant.name}}</td>
               <td>{{participant.solar_capacity}}</td>
               <td>{{participant.battery_export_limit}}</td>
