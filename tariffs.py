@@ -8,11 +8,12 @@ class Tariffs :
         self.retail_tariff_data_path = retail_tariff_data_path
         self.duos_data_path = duos_data_path
         self.tuos_data_path = tuos_data_path
-        self.ui_tariff_data_path = ui_tariff_data_path
         # Get tariff data (note tuos not considered as yet)
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
+        
         # TODO - For testing ahead of integration with UI
+        self.ui_tariff_data_path = ui_tariff_data_path
         self.ui_tariff_data = pd.read_csv(ui_tariff_data_path, index_col = ['gen_type'])
         # Extract individual charges to reduce code below
         self.local_solar_energy = self.ui_tariff_data.loc['local_solar','energy_charge']
@@ -87,6 +88,7 @@ class Tariffs :
         """This is the tariff paid by the participant to the battery when consuming battery export electricity."""
         """Input in UI"""
         participant_central_battery_import_tariff = self.central_battery_energy + self.central_battery_retail + self.central_battery_duos + self.central_battery_profit
+        # print(participant_central_battery_import_tariff)
         return participant_central_battery_import_tariff
 
     def get_retail_solar_tariff(self,date_time, retail_tariff_type, solar_capacity):
@@ -220,8 +222,8 @@ class Tariffs :
         # print(check_total_battery_import_tariff)
         return total_battery_import_tariff
 
-
 # test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test", "data/ui_tariffs_eg.csv")
 # test_tariff.get_total_central_battery_import_tariff('a')
+# test_tariff.get_central_batt_buy_tariff('a')
 # print(test_tariff.get_variable_tariff(30,'Business TOU'))
 

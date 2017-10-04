@@ -451,27 +451,34 @@ def run_en():
         # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
 
     # --------------------------------------------------------------
-    # Retailer and Central Battery financial calcs
+    # Central Battery financial calcs
     # --------------------------------------------------------------
     for time in time_periods:
-        # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-        # TODO - check whether .sum() is working as expected! See test file.
-        financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
-        financial_output["df_retailer_revenue"].loc[time, 'grid_import_revenue_variable'] = my_tariffs.get_retail_income_on_grid_import_variable(time) * gross_participant_grid_import
-        financial_output["df_retailer_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_retail_income_on_local_solar_import(time) * gross_participant_local_solar_import
-        financial_output["df_retailer_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_retail_income_on_central_batt_import(time) * gross_participant_central_battery_import
-        financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = financial_output["df_retailer_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         
         # Central Battery revenue
-        # TODO - will need to update thif is the battery can also import from / export to the grid.
-        # Energy imported by the battery
+        # TODO - will need to update thif is the battery can also import from / export to the grid. May also want to save total batt import / export to a df??
+        # Energy imported by the battery (checked - works)
         battery_import = data_output["df_central_batt_solar_sales"].loc[time].sum()
-        # Energy exported by the battery
+        # Energy exported by the battery (checked - works)
         battery_export = data_output["df_participant_central_batt_import"].loc[time].sum()
         # Calculate income for battery which is export(kWh) * export tariff for energy paid by consumer (c/kWh) minus import (kWh) * import tariff for energy paid by battery (c/kWh, includes energy,retail,NUOS)
         financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
 
-
+        # --------------------------------------------------------------
+        # Retailer financial calcs
+        # --------------------------------------------------------------
+        # Fixed charges revenue is the sum of customer fixed charges minus the sum of fixed charges paid to DNSP
+        financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_fixed'] = financial_output["df_fixed_charge"].loc[time].sum() - financial_output["df_dnsp_revenue"].loc[time,'grid_import_revenue_fixed']
+        # TODO
+        # Variable = customer variable sum - DNSP variable
+        # Solar export to grid cost = customer solar export to grid revenue sum
+        # Local solar sold to participants revenue = volume local solar sold to participants * retail charge (get from tariffs)
+        # Local solar sold to battery revenue = volume local solar sold to central battery * retail charge (get from tariffs)
+        # Central battery export sold to participants = volume central battery energy sold to participants * retail change (get from tariffs)
+        financial_output["df_retailer_revenue"].loc[time, 'grid_import_revenue_variable'] = my_tariffs.get_retail_income_on_grid_import_variable(time) * gross_participant_grid_import
+        financial_output["df_retailer_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_retail_income_on_local_solar_import(time) * gross_participant_local_solar_import
+        financial_output["df_retailer_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_retail_income_on_central_batt_import(time) * gross_participant_central_battery_import
+        financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = financial_output["df_retailer_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
 
     # dts = financial_output["df_participant_variable_charge"].index.values.tolist()
     # print dts
