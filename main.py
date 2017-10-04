@@ -33,6 +33,7 @@ def run_en(scenario= None):
 
     participant_1 = Participant('building_1','solar','Business TOU','LV Business TOU_Interval meter', 'ENOVA')
     participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
+    participant_3 = Participant('building_3','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
 
 
     # Add participants to network
@@ -548,10 +549,11 @@ def run_en_json(scenario=None):
     
 
 # print(run_en())
-run_en()
+
 
 # pp = pprint.PrettyPrinter(indent=4)
-# pp.pprint(run_en())
+if __name__ == "__main__":
+    print(run_en())
 
 # print run_en_json()
 
