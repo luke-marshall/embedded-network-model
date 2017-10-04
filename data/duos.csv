@@ -4,4 +4,4 @@ Ref,dnsp,offer_name,type,daily_charge,flat_charge,peak_charge,shoulder_charge,of
 3,essential_energy,LV Small Business Anytime,BLNN1AU,0.7789,0.13851,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,0
 4,essential_energy,LV TOU <100MWh,BLNT2AU,6.1644,0,0.135409,0.123165,0.061697,0,0,0,17,20,0,0,7,17,20,22,0,0,0,,1
 5,essential_energy,LV Business TOU_Interval meter,BLNT2AL,1.3699,0,0.140533,0.118528,0.059652,0,0,0,17,20,0,0,7,17,20,22,0,0,0,,1
-6,essential_energy,Small Business - Opt in Demand,BLND1AB,1.3699,0,0.040927,0.035443,0.023304,0,0,0,17,20,0,0,7,17,20,22,0,0,0.062211,$/kVA/M,1
+6,essential_energy,Small Business - Opt in Demand,BLND1AB,1.3699,0,0.040927,0.035443,0.023304,0,0,0,17,20,0,0,7,17,20,22,0,0,6.2211,$/kVA/M,1

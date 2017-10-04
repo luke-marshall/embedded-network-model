@@ -79,7 +79,7 @@ class Tariffs :
 
     def get_fixed_tariff(self, fixed_period_minutes, retail_tariff_type):
         """Fixed tariff component from retail tariff data. Returns fixed value expressed per fixed period minutes (input)."""
-        fixed_tariff = self.retail_tariff_data.loc[retail_tariff_type,'daily_charge'] * (fixed_period_minutes/(60*24))
+        fixed_tariff = self.retail_tariff_data.loc[retail_tariff_type,'daily_charge'] * (float(fixed_period_minutes)/float(60*24))
         return fixed_tariff
 
 
@@ -87,7 +87,7 @@ class Tariffs :
     # Things the network is paid (fixed DUOS charges, variable DUOS charges, local solar DUOS charges, central battery DUOS charges)
     # Apply to amounts consumer each time period then sum for total network income
     def get_duos_on_grid_import_fixed(self,fixed_period_minutes, duos_tariff_type):
-        fixed_tariff = self.duos_tariff_data.loc[duos_tariff_type,'daily_charge'] * (fixed_period_minutes/(60*24))
+        fixed_tariff = self.duos_tariff_data.loc[duos_tariff_type,'daily_charge'] * (float(fixed_period_minutes)/float(60*24))
         return fixed_tariff
 
     def get_duos_on_grid_import_variable(self,date_time, duos_tariff_type):
