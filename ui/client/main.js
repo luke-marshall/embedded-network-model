@@ -47,7 +47,7 @@ Template.sidebar.events({
     'click button' (event, instance) {
         console.log('Clicked the button!')
             // increment the counter when button is clicked
-        var id_num = $('#id_num').val();
+
         var name = $('#participant_name').val();
         var solar_capacity = $('#solar_capacity').val();
         var battery_export_limit = $('#battery_export_limit').val();
@@ -61,7 +61,7 @@ Template.sidebar.events({
         var participants = Session.get("participants");
 
         participants.push({
-            id_num: id_num,
+
             participant_id: participant_id,
             name: name,
             solar_capacity: solar_capacity,
