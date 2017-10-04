@@ -29,7 +29,7 @@ def run_en():
     mynetwork.add_central_battery(battery_1)
 
     # Add tariffs
-    my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test")
+    my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test", "data/ui_tariffs_eg.csv")
 
     # Generate a list of time periods in half hour increments
     time_periods = util.generate_dates_in_range(datetime.datetime.now() - datetime.timedelta(hours = 8), datetime.datetime.now(), 30)
@@ -251,9 +251,9 @@ def run_en():
             external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
 
             # Calc resultant financial flows (all except variable charge - this is done below)
-            financial_output["df_local_solar_import_charge"].loc[time,p.get_id()] = my_tariffs.get_local_solar_tariff(time) * local_solar_import
+            financial_output["df_local_solar_import_charge"].loc[time,p.get_id()] = my_tariffs.get_local_solar_import_tariff(time) * local_solar_import
             financial_output["df_central_batt_import_charge"].loc[time,p.get_id()] = my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import
-            financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_tariff(time) * local_solar_sales
+            financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_export_tariff(time) * local_solar_sales
             financial_output["df_central_batt_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_central_batt_buy_tariff(time) * central_batt_solar_sales
             financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
             financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
@@ -451,7 +451,7 @@ def run_en():
         # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
 
     # --------------------------------------------------------------
-    # Retailer financial calcs
+    # Retailer and Central Battery financial calcs
     # --------------------------------------------------------------
     for time in time_periods:
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
@@ -463,10 +463,10 @@ def run_en():
         financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = financial_output["df_retailer_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         
         # Central Battery revenue
+        # TODO - will need to update thif is the battery can also import from / export to the grid.
         # Energy imported by the battery
         battery_import = data_output["df_central_batt_solar_sales"].loc[time].sum()
         # Energy exported by the battery
-        # TODO - will need to update thif is the battery can also import from the grid.
         battery_export = data_output["df_participant_central_batt_import"].loc[time].sum()
         # Calculate income for battery which is export(kWh) * export tariff for energy paid by consumer (c/kWh) minus import (kWh) * import tariff for energy paid by battery (c/kWh, includes energy,retail,NUOS)
         financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
