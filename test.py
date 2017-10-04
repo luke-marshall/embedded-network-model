@@ -7,3 +7,12 @@ print(df)
 
 sum1 = df.loc[13].sum()
 print(sum1)
+
+# for row in df.index.values:
+#     df['total'] = df.loc[row].sum()
+
+df['total'] = df.sum(axis=1)
+print(df)
+
+test_sum = df['a'].sum(axis=0)
+print(test_sum)

@@ -12,7 +12,7 @@ class Tariffs :
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
         # print(self.retail_tariff_data)
-        print(self.duos_tariff_data)
+        # print(self.duos_tariff_data)
     
     def get_variable_tariff(self, date_time, retail_tariff_type):
         """Variable tariff component from retail tariff data."""
@@ -122,14 +122,16 @@ class Tariffs :
         if duos_tariff_type == 'LV Small Business Anytime':
             variable_tariff = (flat_charge)           
 
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
         if duos_tariff_type == 'LV TOU <100MWh':
-            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag)
-
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+        
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
         if duos_tariff_type == 'LV Business TOU_Interval meter':
-            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag)
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
 
         if duos_tariff_type == 'Small Business - Opt in Demand':
-            variable_tariff = variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
 
         return variable_tariff
 
@@ -189,6 +191,6 @@ class Tariffs :
         return total_battery_import_tariff
 
 
-test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test")
-print(test_tariff.get_variable_tariff(30,'Business TOU'))
+# test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test")
+# print(test_tariff.get_variable_tariff(30,'Business TOU'))
 

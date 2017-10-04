@@ -39,7 +39,7 @@ class CSV_Participant(Participant):
         # Apply capacity to solar data
         self.solar_data = solar_data['solar']
         self.solar_data = solar_data * solar_capacity
-
+        
     def calc_net_export(self, date_time, interval_min):
         solar_data = float(self.solar_data.loc[date_time])
         load_data = float(self.load_data.loc[date_time])
