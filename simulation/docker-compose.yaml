@@ -1,0 +1,7 @@
+web:
+  build: .
+  container_name: en_sim_server
+  ports:
+    - "5000:5000"
+  volumes:
+    - .:/simulation
