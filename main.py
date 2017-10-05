@@ -488,7 +488,7 @@ def run_en():
         # Total
         financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = financial_output["df_retailer_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable', 'grid_solar_export_payments' ,'local_solar_participant_import_revenue', 'central_battery_local_solar_import_revenue' ,'participant_central_battery_import_revenue']].sum()
     
-    print(financial_output["df_retailer_revenue"])
+
     # dts = financial_output["df_participant_variable_charge"].index.values.tolist()
     # print dts
     # new_indices = [dt.isoformat() for dt in dts]
