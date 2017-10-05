@@ -1,0 +1,11 @@
+{
+    "galaxy.meteor.com": {
+        "env": {
+            "ROOT_URL": "http://embeddednetwork.meteorapp.com/",
+            "DEPLOY_HOSTNAME": "galaxy.meteor.com",
+            "MONGO_URL": "mongodb://nowhere"
+        }
+    },
+    "simulation_api_url": "http://default-environment.qgugeyxibz.ap-southeast-2.elasticbeanstalk.com/"
+
+}
