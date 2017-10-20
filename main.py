@@ -67,7 +67,7 @@ def run_en():
 
         data_output['df_network_energy_flows'].loc[time, 'central_battery_export'] = central_battery_export
 
-        # Calc network in/out kWh
+        # Calc network in/out kWh TODO check wherether this is a problem - col doesn't seem to exist in df
         data_output['df_network_energy_flows'].loc[time, 'net_network_export'] = net_participant_export + central_battery_export
 
         # Run local solar allocation algorithm
@@ -206,6 +206,7 @@ def run_en():
         data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] = abs(min(data_output['df_network_energy_flows'].loc[time, 'net_participant_export'],0))
         data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import'] = max(data_output['df_local_solar_import'].loc[time].sum(),0)
         data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import'] = max(data_output["df_participant_central_batt_import"].loc[time].sum(),0)
+        # TODO - add this 'gross_central_battery_local_solar_import' to df when initialised
         data_output["df_network_energy_flows"].loc[time, 'gross_central_battery_local_solar_import'] = max(data_output["df_central_batt_solar_sales"].loc[time].sum(),0)
 
 
