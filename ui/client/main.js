@@ -13,6 +13,7 @@ Template.sidebar.onCreated(function sidebarOnCreated() {
 
     Meteor.call('participantNames', function(err, res) {
         console.log(res);
+        console.log('got participant names ok')
         Session.set('participantNames', res);
     });
 });
@@ -80,11 +81,15 @@ Template.sidebar.events({
         Session.set('simulationRunning', true);
         Meteor.call('runSimulation', Session.get("participants"), function(error, res) {
             // console.log(res);
+            console.log('Simulation Ran. ')
             var res = JSON.parse(res);
             Session.set('simulationData', res);
             Session.set('haveSimResults', true);
+            console.log('Calling graw graph function. ')
+                // drawRandomGraph();
             drawGraph(res);
             Session.set('simulationRunning', false);
+            console.log('Making graph content visible. ')
             $(".graph-content").css('visibility', 'visible');
         });
     }
@@ -105,14 +110,351 @@ Template.graph.helpers({
 
 
 function drawGraph(response_data) {
-
+    console.log('drawing graph');
     //LUKE: 
     //Clearing the elements so we can re-render.
     document.getElementById("chart").innerHTML = "";
     document.getElementById('preview').innerHTML = "";
     document.getElementById('timeline').innerHTML = "";
     document.getElementById('legend').innerHTML = "";
+    console.log('Got all the elements.')
+    var RenderControls = function(args) {
+        console.log('In renderControls.')
+        var $ = jQuery;
 
+        this.initialize = function() {
+            console.log('In initialize.')
+            this.element = args.element;
+            this.graph = args.graph;
+            this.settings = this.serialize();
+
+            this.inputs = {
+                renderer: this.element.elements.renderer,
+                interpolation: this.element.elements.interpolation,
+                offset: this.element.elements.offset
+            };
+
+            this.element.addEventListener('change', function(e) {
+                console.assert.log('Event listener changed')
+                this.settings = this.serialize();
+                console.log('At eventlistener dooley')
+                if (e.target.name == 'renderer') {
+                    this.setDefaultOffset(e.target.value);
+                }
+
+                this.syncOptions();
+                this.settings = this.serialize();
+
+                var config = {
+                    renderer: this.settings.renderer,
+                    interpolation: this.settings.interpolation
+                };
+
+                if (this.settings.offset == 'value') {
+                    config.unstack = true;
+                    config.offset = 'zero';
+                } else if (this.settings.offset == 'expand') {
+                    config.unstack = false;
+                    config.offset = this.settings.offset;
+                } else {
+                    config.unstack = false;
+                    config.offset = this.settings.offset;
+                }
+
+                this.graph.configure(config);
+                this.graph.render();
+
+            }.bind(this), false);
+        }
+
+        this.serialize = function() {
+            console.log('In serialize');
+            var values = {};
+            var pairs = $(this.element).serializeArray();
+
+            pairs.forEach(function(pair) {
+                values[pair.name] = pair.value;
+            });
+
+            return values;
+        };
+
+        this.syncOptions = function() {
+            console.log('in SyncOptions.')
+            var options = this.rendererOptions[this.settings.renderer];
+
+            Array.prototype.forEach.call(this.inputs.interpolation, function(input) {
+
+                if (options.interpolation) {
+                    input.disabled = false;
+                    input.parentNode.classList.remove('disabled');
+                } else {
+                    input.disabled = true;
+                    input.parentNode.classList.add('disabled');
+                }
+            });
+
+            Array.prototype.forEach.call(this.inputs.offset, function(input) {
+
+                if (options.offset.filter(function(o) { return o == input.value }).length) {
+                    input.disabled = false;
+                    input.parentNode.classList.remove('disabled');
+
+                } else {
+                    input.disabled = true;
+                    input.parentNode.classList.add('disabled');
+                }
+
+            }.bind(this));
+
+        };
+
+        this.setDefaultOffset = function(renderer) {
+            console.log('in setDefaultOffset');
+            var options = this.rendererOptions[renderer];
+
+            if (options.defaults && options.defaults.offset) {
+
+                Array.prototype.forEach.call(this.inputs.offset, function(input) {
+                    if (input.value == options.defaults.offset) {
+                        input.checked = true;
+                    } else {
+                        input.checked = false;
+                    }
+
+                }.bind(this));
+            }
+        };
+
+        this.rendererOptions = {
+
+            area: {
+                interpolation: true,
+                offset: ['zero', 'wiggle', 'expand', 'value'],
+                defaults: { offset: 'zero' }
+            },
+            line: {
+                interpolation: true,
+                offset: ['expand', 'value'],
+                defaults: { offset: 'value' }
+            },
+            bar: {
+                interpolation: false,
+                offset: ['zero', 'wiggle', 'expand', 'value'],
+                defaults: { offset: 'zero' }
+            },
+            scatterplot: {
+                interpolation: false,
+                offset: ['value'],
+                defaults: { offset: 'value' }
+            }
+        };
+        console.log('about to call initialize')
+        this.initialize();
+    };
+
+
+
+    // set up our data series with 150 random data points
+
+    var seriesData = [
+        // [], //energy 
+        // [],
+        // [],
+
+    ];
+    console.log(response_data);
+
+    var outputData = {}
+    console.log('about to sort and format the data. ');
+    //Add the local solar sales
+    response_data.energy_output.df_local_solar_sales.forEach(function(dp) {
+        for (var key in dp) {
+            if (key != "dt_str") {
+                if (!(key in outputData)) outputData[key] = [];
+                outputData[key].push({
+                    x: moment(dp.dt_str).unix(),
+                    y: dp[key]
+                });
+            }
+        }
+
+    });
+    console.log('about to sort the network en flow data.');
+    //Add the energy export data
+    response_data.energy_output.df_network_energy_flows.forEach(function(dp) {
+        var key = "net_network_export";
+        if (!(key in outputData)) outputData[key] = [];
+        outputData[key].push({
+            x: moment(dp.dt_str).unix(),
+            y: (dp[key]) < 0 ? -1 * dp[key] : 0,
+        });
+
+
+    });
+
+    console.log(outputData);
+    var series = [];
+    var palette = new Rickshaw.Color.Palette({ scheme: 'classic9' });
+    // Add to the charting thing
+    for (var key in outputData) {
+        seriesData.push(outputData[key]);
+        series.push({
+            color: palette.color(),
+            data: outputData[key],
+            name: key,
+        })
+    }
+
+    var random = new Rickshaw.Fixtures.RandomData(150);
+
+    // for (var i = 0; i < 150; i++) {
+    //     random.addData(seriesData);
+    // }
+    console.log(seriesData)
+
+
+    // var series = [{
+    //     color: palette.color(),
+    //     data: seriesData[0],
+    //     name: 'Moscow'
+    // }, {
+    //     color: palette.color(),
+    //     data: seriesData[1],
+    //     name: 'Shanghai'
+    // }, {
+    //     color: palette.color(),
+    //     data: seriesData[2],
+    //     name: 'Amsterdam'
+    // }, ];
+    // instantiate our graph!
+    console.log('getting the chart element');
+    var my_element = document.getElementById("chart");
+    console.log('creating graph');
+    var graph = new Rickshaw.Graph({
+        element: my_element,
+        width: 900,
+        height: 500,
+        renderer: 'area',
+        stroke: true,
+        preserve: true,
+        series: series,
+    });
+
+    console.log('rendering graph');
+    graph.render();
+
+    var preview = new Rickshaw.Graph.RangeSlider.Preview({
+        graph: graph,
+        element: document.getElementById('preview'),
+    });
+
+    var hoverDetail = new Rickshaw.Graph.HoverDetail({
+        graph: graph,
+        xFormatter: function(x) {
+            return new Date(x * 1000).toString();
+        }
+    });
+
+    var annotator = new Rickshaw.Graph.Annotate({
+        graph: graph,
+        element: document.getElementById('timeline')
+    });
+
+    var legend = new Rickshaw.Graph.Legend({
+        graph: graph,
+        element: document.getElementById('legend')
+
+    });
+
+    var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+        graph: graph,
+        legend: legend
+    });
+
+    var order = new Rickshaw.Graph.Behavior.Series.Order({
+        graph: graph,
+        legend: legend
+    });
+
+    var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
+        graph: graph,
+        legend: legend
+    });
+
+    var smoother = new Rickshaw.Graph.Smoother({
+        graph: graph,
+        element: document.querySelector('#smoother')
+    });
+
+    var ticksTreatment = 'glow';
+
+    var xAxis = new Rickshaw.Graph.Axis.Time({
+        graph: graph,
+        ticksTreatment: ticksTreatment,
+        timeFixture: new Rickshaw.Fixtures.Time.Local()
+    });
+    console.log('rendering axis');
+    xAxis.render();
+
+    var yAxis = new Rickshaw.Graph.Axis.Y({
+        graph: graph,
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        ticksTreatment: ticksTreatment
+    });
+
+    yAxis.render();
+
+
+    var controls = new RenderControls({
+        element: document.querySelector('form'),
+        graph: graph
+    });
+
+    // add some data every so often
+
+    var messages = [
+        "Changed home page welcome message",
+        "Minified JS and CSS",
+        "Changed button color from blue to green",
+        "Refactored SQL query to use indexed columns",
+        "Added additional logging for debugging",
+        "Fixed typo",
+        "Rewrite conditional logic for clarity",
+        "Added documentation for new methods"
+    ];
+
+    // setInterval(function() {
+    //     random.removeData(seriesData);
+    //     random.addData(seriesData);
+    //     graph.update();
+
+    // }, 3000);
+
+    function addAnnotation(force) {
+        if (messages.length > 0 && (force || Math.random() >= 0.95)) {
+            annotator.add(seriesData[2][seriesData[2].length - 1].x, messages.shift());
+            annotator.update();
+        }
+    }
+    console.log('ading annotation.')
+    addAnnotation(true);
+    // setTimeout(function() { setInterval(addAnnotation, 6000) }, 6000);
+
+    console.log(preview)
+    var previewXAxis = new Rickshaw.Graph.Axis.Time({
+        graph: preview.previews[0],
+        timeFixture: new Rickshaw.Fixtures.Time.Local(),
+        ticksTreatment: ticksTreatment
+    });
+    console.log('preview x axis rendering.');
+    previewXAxis.render();
+    console.log('End of the Graphing function woo!')
+}
+
+
+
+function drawRandomGraph() {
     var RenderControls = function(args) {
 
         var $ = jQuery;
@@ -253,74 +595,24 @@ function drawGraph(response_data) {
     // set up our data series with 150 random data points
 
     var seriesData = [
-        // [], //energy 
-        // [],
-        // [],
-
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
     ];
-    console.log(response_data);
-
-    var outputData = {}
-
-    //Add the local solar sales
-    response_data.energy_output.df_local_solar_sales.forEach(function(dp) {
-        for (var key in dp) {
-            if (key != "dt_str") {
-                if (!(key in outputData)) outputData[key] = [];
-                outputData[key].push({
-                    x: moment(dp.dt_str).unix(),
-                    y: dp[key]
-                });
-            }
-        }
-
-    });
-    //Add the energy export data
-    response_data.energy_output.df_network_energy_flows.forEach(function(dp) {
-        var key = "net_network_export";
-        if (!(key in outputData)) outputData[key] = [];
-        outputData[key].push({
-            x: moment(dp.dt_str).unix(),
-            y: (dp[key]) < 0 ? -1 * dp[key] : 0,
-        });
-
-
-    });
-
-    console.log(outputData);
-    var series = [];
-    var palette = new Rickshaw.Color.Palette({ scheme: 'classic9' });
-    // Add to the charting thing
-    for (var key in outputData) {
-        seriesData.push(outputData[key]);
-        series.push({
-            color: palette.color(),
-            data: outputData[key],
-            name: key,
-        })
-    }
-
     var random = new Rickshaw.Fixtures.RandomData(150);
 
-    // for (var i = 0; i < 150; i++) {
-    //     random.addData(seriesData);
-    // }
-    console.log(seriesData)
+    for (var i = 0; i < 150; i++) {
+        random.addData(seriesData);
+    }
 
+    var palette = new Rickshaw.Color.Palette({ scheme: 'classic9' });
 
-    // var series = [{
-    //     color: palette.color(),
-    //     data: seriesData[0],
-    //     name: 'Moscow'
-    // }, {
-    //     color: palette.color(),
-    //     data: seriesData[1],
-    //     name: 'Shanghai'
-    // }, {
-    //     color: palette.color(),
-    //     data: seriesData[2],
-    //     name: 'Amsterdam'
-    // }, ];
     // instantiate our graph!
 
     var graph = new Rickshaw.Graph({
@@ -330,7 +622,35 @@ function drawGraph(response_data) {
         renderer: 'area',
         stroke: true,
         preserve: true,
-        series: series,
+        series: [{
+            color: palette.color(),
+            data: seriesData[0],
+            name: 'Participant 1'
+        }, {
+            color: palette.color(),
+            data: seriesData[1],
+            name: 'Participant 2'
+        }, {
+            color: palette.color(),
+            data: seriesData[2],
+            name: 'Participant 3'
+        }, {
+            color: palette.color(),
+            data: seriesData[3],
+            name: 'Participant 4'
+        }, {
+            color: palette.color(),
+            data: seriesData[4],
+            name: 'Participant 5'
+        }, {
+            color: palette.color(),
+            data: seriesData[5],
+            name: 'Participant 6'
+        }, {
+            color: palette.color(),
+            data: seriesData[6],
+            name: 'Participant 7'
+        }]
     });
 
     graph.render();
@@ -415,12 +735,12 @@ function drawGraph(response_data) {
         "Added documentation for new methods"
     ];
 
-    // setInterval(function() {
-    //     random.removeData(seriesData);
-    //     random.addData(seriesData);
-    //     graph.update();
+    setInterval(function() {
+        random.removeData(seriesData);
+        random.addData(seriesData);
+        graph.update();
 
-    // }, 3000);
+    }, 3000);
 
     function addAnnotation(force) {
         if (messages.length > 0 && (force || Math.random() >= 0.95)) {
@@ -430,7 +750,7 @@ function drawGraph(response_data) {
     }
 
     addAnnotation(true);
-    // setTimeout(function() { setInterval(addAnnotation, 6000) }, 6000);
+    setTimeout(function() { setInterval(addAnnotation, 6000) }, 6000);
 
     console.log(preview)
     var previewXAxis = new Rickshaw.Graph.Axis.Time({
