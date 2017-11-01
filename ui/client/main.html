@@ -23,7 +23,7 @@
 
   <!-- <form class='add_participant'> -->
     <div class="add-participant-form">
-
+      <h4>Participants</h4>
       <div class="participant-form-item">
         
         <select name="particpant-id-selector" id="particpant-id-selector" class="form-control" value="participantNames.[0]">
@@ -70,6 +70,50 @@
 
       
     </div>
+
+    <div class="set-tariff-form">
+      <h4>Tariffs</h4>
+      <div class="participant-form-item">
+        <h5>Local Solar</h5>
+      </div>
+      <div class="participant-form-item">
+        Energy <input type='text' name='local-energy' id='local-energy' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        Retail <input type='text' name='local-retail' id='local-retail' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        DUOS <input type='text' name='local-duos' id='local-duos' placeholder='0.1' value="0.1">
+      </div>
+
+      <div class="participant-form-item">
+        <h5>Central Battery Import</h5>
+      </div>
+      <div class="participant-form-item">
+        Energy <input type='text' name='central-battery-import-energy' id='central-battery-import-energy' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        Retail <input type='text' name='central-battery-import-retail' id='central-battery-import-retail' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        DUOS <input type='text' name='central-battery-import-duos' id='central-battery-import-duos' placeholder='0.1' value="0.1">
+      </div>
+
+      <div class="participant-form-item">
+        <h5>Central Battery export</h5>
+      </div>
+      <div class="participant-form-item">
+        Energy <input type='text' name='central-battery-export-energy' id='central-battery-export-energy' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        Retail <input type='text' name='central-battery-export-retail' id='central-battery-export-retail' placeholder='0.1' value="0.1">
+      </div>
+      <div class="participant-form-item">
+        DUOS <input type='text' name='central-battery-export-duos' id='central-battery-export-duos' placeholder='0.1' value="0.1">
+      </div>
+    </div>
+
+
     {{#if simulationRunning}}
     <div class="btn btn-danger" id="">Simulation Running</div>
     {{else}}
