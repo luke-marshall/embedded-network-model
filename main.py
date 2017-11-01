@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import pprint
 import csv
+import os
 
 DEFAULT_LOAD_DATA_PATH = "data/essential_load_data_aie_26_feb_1_may.csv"
 def getParticipantNames():
@@ -27,19 +28,33 @@ def run_en(scenario= None):
 
     # Create participants
 
-    # participant_1 = CSV_Participant('participant_1','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    # participant_2 = CSV_Participant('participant_2','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    # participant_3 = CSV_Participant('participant_3','solar', 'A', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_9 = CSV_Participant('participant_9','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_10 = CSV_Participant('participant_10','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_11 = CSV_Participant('participant_11','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
 
-    participant_1 = Participant('building_1','solar','Business TOU','LV Business TOU_Interval meter', 'ENOVA')
-    participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
-    participant_3 = Participant('building_3','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
+    # participant_1 = Participant('building_1','solar','Business TOU','LV Business TOU_Interval meter', 'ENOVA')
+    # participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
+    # participant_3 = Participant('building_3','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
 
 
     # Add participants to network
     mynetwork.add_participant(participant_1)
     mynetwork.add_participant(participant_2)
     mynetwork.add_participant(participant_3)
+    mynetwork.add_participant(participant_4)
+    mynetwork.add_participant(participant_5)
+    mynetwork.add_participant(participant_6)
+    mynetwork.add_participant(participant_7)
+    mynetwork.add_participant(participant_8)
+    mynetwork.add_participant(participant_9)
    
 
     # Add a central battery
@@ -50,28 +65,26 @@ def run_en(scenario= None):
     my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test")
 
     # Generate a list of time periods in half hour increments
-    time_periods = util.generate_dates_in_range(datetime.datetime(year=2017,month=2,day=27,hour=1) , datetime.datetime(year=2017,month=2,day=27,hour=1) + datetime.timedelta(days = 1), 30)
+    time_periods = util.generate_dates_in_range(datetime.datetime(year=2017,month=2,day=27,hour=9) , datetime.datetime(year=2017,month=2,day=27,hour=9) + datetime.timedelta(hours = 5), 30)
+   
+
     # Make empty df
     data_output = {
-        "df_net_export" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_network_energy_flows" : pd.DataFrame(index = time_periods, columns=['net_participant_export', 'central_battery_export', 'unallocated_local_solar', 'unallocated_central_battery_load','gross_participant_grid_import','gross_participant_local_solar_import','gross_participant_central_battery_import']),
-        "df_local_solar_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_participant_central_batt_import" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_local_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_central_batt_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_export_to_grid_solar_sales" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_external_grid_elec_import": pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
+        "df_net_export" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_network_energy_flows" : pd.DataFrame(0,index = time_periods, columns=['net_participant_export', 'central_battery_export', 'unallocated_local_solar', 'unallocated_central_battery_load','gross_participant_grid_import','gross_participant_local_solar_import','gross_participant_central_battery_import']),
+        "df_local_solar_import" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_participant_central_batt_import" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_local_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_central_batt_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_export_to_grid_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_external_grid_elec_import": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
         }
-    # print(data_output)
-
-
-
 
     for time in time_periods:
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
             data_output['df_net_export'].loc[time,p.get_id()] = p.calc_net_export(time, 30)
-
+        
         # Calc exces solar sharing / sales
         net_participant_export =  mynetwork.calc_total_participant_export(time, 30)
         data_output['df_network_energy_flows'].loc[time, 'net_participant_export'] = net_participant_export
@@ -136,7 +149,8 @@ def run_en(scenario= None):
 
                 # Allocate battery export when there is battery export and all solar has been used by this participant
                 if battery_allocation > 0 and reject_solar <= 0 :
-                    participant_central_batt_import = min(abs(battery_allocation), abs(participants_list_sorted.loc[p,'net_export']) - abs(local_solar_import))
+                    participant_net_export = participants_list_sorted.loc[p,'net_export']
+                    participant_central_batt_import = min(abs(battery_allocation), abs(participant_net_export) - abs(local_solar_import))
                     data_output["df_participant_central_batt_import"].loc[time, p] = participant_central_batt_import
                     available_batt -= participant_central_batt_import
                     battery_allocation = float(available_batt) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
@@ -228,20 +242,20 @@ def run_en(scenario= None):
 
     # Charges are positive (if earning money then negative). Revenue is positive when earning money.
     financial_output = {
-        "df_participant_variable_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_local_solar_import_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_central_batt_import_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_local_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        "df_central_batt_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_export_to_grid_solar_sales_revenue" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_fixed_charge" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_total_participant_bill" : pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_participant_variable_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_local_solar_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_central_batt_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_local_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
+        "df_central_batt_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_export_to_grid_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_fixed_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         # The df_participant_duos_payments df contains the amount paid by each participant in DUOS charges. This is summed to find the DNSP variable revenue from grid import
-        "df_participant_duos_payments": pd.DataFrame(index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        "df_dnsp_revenue" : pd.DataFrame(index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        "df_tnsp_revenue" : pd.DataFrame(index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        "df_retailer_revenue" : pd.DataFrame(index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        "df_central_battery_revenue" : pd.DataFrame(index = time_periods, columns=['central_battery_revenue'])
+        "df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_dnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
+        "df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
+        "df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
+        "df_central_battery_revenue" : pd.DataFrame(0,index = time_periods, columns=['central_battery_revenue'])
         }
 
     # --------------------------------------------------------------
@@ -344,14 +358,15 @@ def run_en(scenario= None):
             
             # Total bill
             participant_variable_charge = financial_output["df_participant_variable_charge"].loc[time, p.get_id()]
-            local_solar_import_charge = financial_output["df_local_solar_import_charge"].loc[time, p.get_id()] 
-            central_batt_import_charge = financial_output["df_central_batt_import_charge"].loc[time, p.get_id()] 
-            local_solar_sales_revenue = financial_output["df_local_solar_sales_revenue"].loc[time, p.get_id()] 
+            local_solar_import_charge = financial_output["df_local_solar_import_charge"].loc[time, p.get_id()]
+            central_batt_import_charge = financial_output["df_central_batt_import_charge"].loc[time, p.get_id()]
+            local_solar_sales_revenue = financial_output["df_local_solar_sales_revenue"].loc[time, p.get_id()]
             central_batt_solar_sales_revenue = financial_output["df_central_batt_solar_sales_revenue"].loc[time, p.get_id()]
             export_to_grid_solar_sales_revenue = financial_output["df_export_to_grid_solar_sales_revenue"].loc[time, p.get_id()]
             fixed_charge = financial_output["df_fixed_charge"].loc[time, p.get_id()]
+
             # Add charges and subtract revenue for total bill
-            financial_output["df_total_participant_bill"].loc[time,p.get_id()] = participant_variable_charge + local_solar_import_charge + central_batt_import_charge + fixed_charge - local_solar_sales_revenue - central_batt_solar_sales_revenue - export_to_grid_solar_sales_revenue
+            financial_output["df_total_participant_bill"].loc[time,p.get_id()] = participant_variable_charge + local_solar_import_charge + central_batt_import_charge + fixed_charge - local_solar_sales_revenue - central_batt_solar_sales_revenue - export_to_grid_solar_sales_revenue 
 
     
     # --------------------------------------------------------------
@@ -546,7 +561,13 @@ def run_en_json(scenario=None):
     
     return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
 
-    
+
+def run_en_csv(output_dir):
+    result = run_en()
+    for label in result['financial_output']:
+        result['financial_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label))
+    for label in result['data_output']:
+        result['data_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label))
 
 # print(run_en())
 
@@ -554,6 +575,7 @@ def run_en_json(scenario=None):
 # pp = pprint.PrettyPrinter(indent=4)
 if __name__ == "__main__":
     print(run_en())
+    run_en_csv('output')
 
 # print run_en_json()
 
