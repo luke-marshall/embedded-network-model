@@ -20,7 +20,7 @@ def getParticipantNames():
     return headers
 
 def run_en(scenario= None):
-        
+    
     TIME_PERIOD_LENGTH_MINS = 30
 
     # Create a network
@@ -29,16 +29,16 @@ def run_en(scenario= None):
     # Create participants
 
     participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
     participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
     participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_9 = CSV_Participant('participant_9','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_10 = CSV_Participant('participant_10','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_11 = CSV_Participant('participant_11','solar', 'Business TOU', 'Small Business - Opt in Demand','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV Business TOU_Interval meter','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
+    participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
 
     # participant_1 = Participant('building_1','solar','Business TOU','LV Business TOU_Interval meter', 'ENOVA')
     # participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
@@ -58,14 +58,16 @@ def run_en(scenario= None):
    
 
     # Add a central battery
-    battery_1 = Central_Battery(10.0, 5.0, 0.99)
+    battery_1 = Central_Battery(0.01, 0.01, 0.99)
     mynetwork.add_central_battery(battery_1)
 
     # Add tariffs
     my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test")
 
     # Generate a list of time periods in half hour increments
-    time_periods = util.generate_dates_in_range(datetime.datetime(year=2017,month=2,day=27,hour=9) , datetime.datetime(year=2017,month=2,day=27,hour=9) + datetime.timedelta(hours = 5), 30)
+    start = datetime.datetime(year=2017,month=2,day=26,hour=4)
+    end =  datetime.datetime(year=2017,month=4,day=30,hour=23)
+    time_periods = util.generate_dates_in_range(start, end, 30)
    
 
     # Make empty df
@@ -81,6 +83,7 @@ def run_en(scenario= None):
         }
 
     for time in time_periods:
+        print "Energy",time
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
             data_output['df_net_export'].loc[time,p.get_id()] = p.calc_net_export(time, 30)
@@ -487,6 +490,7 @@ def run_en(scenario= None):
     # Retailer financial calcs
     # --------------------------------------------------------------
     for time in time_periods:
+        print "Financial", time
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
         # TODO - check whether .sum() is working as expected! See test file.
         financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
@@ -564,17 +568,21 @@ def run_en_json(scenario=None):
 
 def run_en_csv(output_dir):
     result = run_en()
+    print "Writing to CSV"
+    # battery_capacity = str(network.get_batteries()[0].cap_kWh)+"kWh" if len(network.get_batteries()) > 0 else ""
     for label in result['financial_output']:
-        result['financial_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label))
+        print label
+        result['financial_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label+".csv"))
     for label in result['data_output']:
-        result['data_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label))
+        print label
+        result['data_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label+".csv"))
 
 # print(run_en())
 
 
 # pp = pprint.PrettyPrinter(indent=4)
 if __name__ == "__main__":
-    print(run_en())
+    # print(run_en())
     run_en_csv('output')
 
 # print run_en_json()
