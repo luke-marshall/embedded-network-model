@@ -55,6 +55,8 @@ def run_en(scenario= None):
     mynetwork.add_participant(participant_7)
     mynetwork.add_participant(participant_8)
     mynetwork.add_participant(participant_9)
+    mynetwork.add_participant(participant_10)
+    mynetwork.add_participant(participant_11)
    
 
     # Add a central battery
