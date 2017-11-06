@@ -28,17 +28,17 @@ def run_en(scenario= None):
 
     # Create participants
 
-    participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
-    participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",20)
-    participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",26)
+    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",14.8)
+    participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",27.5)
+    participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",3)
+    participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
 
     # participant_1 = Participant('building_1','solar','Business TOU','LV TOU <100MWh', 'ENOVA')
     # participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
@@ -86,7 +86,7 @@ def run_en(scenario= None):
         }
 
     for time in time_periods:
-        print "Energy",time
+        # print "Energy",time
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
             data_output['df_net_export'].loc[time,p.get_id()] = p.calc_net_export(time, 30)
@@ -493,7 +493,7 @@ def run_en(scenario= None):
     # Retailer financial calcs
     # --------------------------------------------------------------
     for time in time_periods:
-        print "Financial", time
+        # print "Financial", time
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
         # TODO - check whether .sum() is working as expected! See test file.
         financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
@@ -586,8 +586,9 @@ def run_en_csv(output_dir, scenario=None):
 
 # pp = pprint.PrettyPrinter(indent=4)
 if __name__ == "__main__":
-    
-    for battery_capacity in range(30,50,5):
+    print "Running Simulation: ",0, "kWh"
+    run_en_csv('output', {'battery_capacity':0.001})
+    for battery_capacity in range(5,35,5):
         print "Running Simulation: ",battery_capacity, "kWh"
         run_en_csv('output', {'battery_capacity':battery_capacity})
 
