@@ -585,7 +585,7 @@ def run_en_csv(output_dir, scenario=None):
 # pp = pprint.PrettyPrinter(indent=4)
 if __name__ == "__main__":
     
-    for battery_capacity in range(5,25,5):
+    for battery_capacity in range(30,50,5):
         print "Running Simulation: ",battery_capacity, "kWh"
         run_en_csv('output', {'battery_capacity':battery_capacity})
 
