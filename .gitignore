@@ -1,3 +1,5 @@
 ui/node_modules/
 .vscode/settings.json
 *.pyc
+
+*.pyc

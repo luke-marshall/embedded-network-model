@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 
 class Tariffs :
-    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path):
+    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path, ui_tariff_data_path):
         self.scheme_name = scheme_name
         self.retail_tariff_data_path = retail_tariff_data_path
         self.duos_data_path = duos_data_path
@@ -11,6 +11,22 @@ class Tariffs :
         # Get tariff data (note tuos not considered as yet)
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
+        
+        # TODO - For testing ahead of integration with UI
+        self.ui_tariff_data_path = ui_tariff_data_path
+        self.ui_tariff_data = pd.read_csv(ui_tariff_data_path, index_col = ['gen_type'])
+        # Extract individual charges to reduce code below
+        self.local_solar_energy = self.ui_tariff_data.loc['local_solar','energy_charge']
+        self.local_solar_retail = self.ui_tariff_data.loc['local_solar','retail_charge']
+        self.local_solar_duos = self.ui_tariff_data.loc['local_solar','duos_charge']
+        self.central_battery_energy = self.ui_tariff_data.loc['central_battery','energy_charge']
+        self.central_battery_retail = self.ui_tariff_data.loc['central_battery','retail_charge']
+        self.central_battery_duos = self.ui_tariff_data.loc['central_battery','duos_charge']
+        self.central_battery_profit = self.ui_tariff_data.loc['central_battery','profit_charge']
+        self.central_battery_importing_ls_energy = self.ui_tariff_data.loc['central_battery_importing_local_solar','energy_charge']
+        self.central_battery_importing_ls_retail = self.ui_tariff_data.loc['central_battery_importing_local_solar','retail_charge']
+        self.central_battery_importing_ls_duos = self.ui_tariff_data.loc['central_battery_importing_local_solar','duos_charge']       
+        # print(self.ui_tariff_data)
         # print(self.retail_tariff_data)
         # print(self.duos_tariff_data)
     
@@ -51,15 +67,30 @@ class Tariffs :
 
         return variable_tariff
 
-    def get_local_solar_tariff(self,date_time):
-        """Input in UI"""
-        return 0.10
+    def get_local_solar_import_tariff(self,date_time):
+        """Input in UI. 
+        Is the amount which the Participant pays for local solar they consume."""
+        local_solar_import_tariff = self.local_solar_energy + self.local_solar_retail + self.local_solar_duos 
+        return local_solar_import_tariff
+
+    def get_local_solar_export_tariff(self,date_time):
+        """Input in UI. 
+        Is the amount which the Participant is paid for local solar they generate."""
+        local_solar_export_tariff = self.local_solar_energy 
+        return local_solar_export_tariff
 
     def get_central_batt_tariff(self,date_time):
-        """This is the tariff paid by the battery to the solar owner when importing solar."""
+        """This is the tariff paid by the battery to the solar owner when importing solar. It should ONLY include energy and is what the participant RECEIVES."""
         """Input in UI"""
-        return self.get_local_solar_tariff(date_time) + 0.02
-    
+        return self.central_battery_importing_ls_energy
+
+    def get_central_batt_buy_tariff(self,date_time):
+        """This is the tariff paid by the participant to the battery when consuming battery export electricity."""
+        """Input in UI"""
+        participant_central_battery_import_tariff = self.central_battery_energy + self.central_battery_retail + self.central_battery_duos + self.central_battery_profit
+        # print(participant_central_battery_import_tariff)
+        return participant_central_battery_import_tariff
+
     def get_retail_solar_tariff(self,date_time, retail_tariff_type, solar_capacity):
         """Solar FiT component from retail tariff data."""
         # Get solar threshold from retail data sheet
@@ -71,11 +102,6 @@ class Tariffs :
         else :
             retail_solar_tariff = self.retail_tariff_data.loc[retail_tariff_type,'solar_tariff_2']
         return retail_solar_tariff
-    
-    def get_central_batt_buy_tariff(self,date_time):
-        """This is the tariff paid by the participant to the battery when consuming battery export electricity."""
-        """Input in UI"""
-        return 0.14
 
     def get_fixed_tariff(self, fixed_period_minutes, retail_tariff_type):
         """Fixed tariff component from retail tariff data. Returns fixed value expressed per fixed period minutes (input)."""
@@ -138,15 +164,16 @@ class Tariffs :
  
 
     def get_duos_on_local_solar_import(self,date_time):
-        return 0.03
+        """From UI"""
+        return self.local_solar_duos
 
     def get_duos_on_central_batt_import(self,date_time):
         """This is the DUOS paid by the customer when consuming battery export."""
-        return 0.01
+        return self.central_battery_duos
 
     def get_duos_on_central_batt_solar_import(self,date_time):
         """This is the DUOS paid by the battery when importing local solar."""
-        return 0.01
+        return self.central_battery_importing_ls_duos
 
     # Transmission use of service charges - will presumably be zero for local solar and battery import
     def get_tuos_on_grid_import_fixed(self,fixed_period_minutes):
@@ -167,30 +194,35 @@ class Tariffs :
         return 0.0
 
     # Things the retailer is paid (fixed retail charges, variable retail charges, local solar retail charges, central battery retail charges)
-    # Maybe unnecessary - could possibly subtract network income from customer bill
-    def get_retail_income_on_grid_import_fixed(self,fixed_period_minutes):
-        return 0.10
-
-    def get_retail_income_on_grid_import_variable(self,date_time):
-        return 0.05
-    
     def get_retail_income_on_local_solar_import(self,date_time):
-        return 0.04
+        return self.local_solar_retail
 
     def get_retail_income_on_central_batt_import(self,date_time):
         """This is the retailer charge paid by the customer when consuming battery export."""
-        return 0.04
+        return self.central_battery_retail
 
     def get_retail_income_on_central_batt_solar_import(self,date_time):
         """This is the retailer charge paid by the battery when importing local solar."""
-        return 0.01
+        return self.central_battery_importing_ls_retail
+    
+    # Maybe unnecessary - could possibly subtract network income from customer bill
+    def get_retail_income_on_grid_import_fixed(self,fixed_period_minutes):
+        """WARNING - does not contain actual values"""
+        return 0.0
+    def get_retail_income_on_grid_import_variable(self,date_time):
+        """WARNING - does not contain actual values"""
+        return 0.0
 
     # Total battery import tariff (i.e. what the battery has to pay when importing energy) Includes energy payment + NUOS payment + retail payment
     def get_total_central_battery_import_tariff(self, date_time):
+        """What the battery pays when importing energy"""
         total_battery_import_tariff = self.get_central_batt_tariff(date_time) + self.get_duos_on_central_batt_solar_import(date_time) + self.get_tuos_on_central_batt_solar_import(date_time) + self.get_retail_income_on_central_batt_solar_import(date_time)
+        # print(total_battery_import_tariff)
+        # check_total_battery_import_tariff = self.central_battery_importing_ls_energy + self.central_battery_importing_ls_retail + self.central_battery_importing_ls_duos
+        # print(check_total_battery_import_tariff)
         return total_battery_import_tariff
 
-
-# test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test")
+# test_tariff = Tariffs('test_scheme',"data/retail_tariffs.csv","data/duos.csv","test", "data/ui_tariffs_eg.csv")
+# test_tariff.get_total_central_battery_import_tariff('a')
+# test_tariff.get_central_batt_buy_tariff('a')
 # print(test_tariff.get_variable_tariff(30,'Business TOU'))
-
