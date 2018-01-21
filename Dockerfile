@@ -3,4 +3,4 @@ ADD . /simulation
 WORKDIR /simulation
 EXPOSE 5000
 RUN pip --no-cache-dir install -r requirements.txt
-ENTRYPOINT ["python", "server.py"]
+ENTRYPOINT ["python", "main.py"]
