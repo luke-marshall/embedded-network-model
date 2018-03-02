@@ -26,11 +26,10 @@ class SimulatorUI(BoxLayout):
         self.set_status("Simulation Running")
         t = Thread(target=run_en_csv, args=('output', {'battery_capacity':0.001}, self.set_status))
         t.start()
-        # t.join()
-        # self.set_status("Simulation Finished")
+
     
     def set_status(self, message):
-        self.ids.status.text = message
+        self.ids.status.text = "Status: " + message
     
 
 

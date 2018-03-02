@@ -20,7 +20,7 @@ def getParticipantNames():
     headers.remove("date_time")
     return headers
 
-def run_en(scenario= None):
+def run_en(scenario= None, status_callback=None):
     
     TIME_PERIOD_LENGTH_MINS = 30
 
@@ -89,8 +89,16 @@ def run_en(scenario= None):
         "df_export_to_grid_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         "df_external_grid_elec_import": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
         }
-
+    
+    if status_callback:
+        status_callback('Performing Energy Calculations: 0%')
+        percent_finished = 0
+        single_step_percent = 100.0 / float(len(time_periods))
+        
     for time in time_periods:
+        if status_callback:
+            percent_finished += single_step_percent
+            status_callback('Performing Energy Calculations: '+str(round(percent_finished))+"%")
         # print "Energy",time
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
@@ -221,6 +229,8 @@ def run_en(scenario= None):
                     available_batt_charging_load -= participant_solar_sale
                     batt_charging_allocation = float(available_batt_charging_load) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
+
+
         # Grid impacts for each customer. Import from grid and solar export to grid.
         for p in mynetwork.get_participants():
             # First, solar export to grid
@@ -247,7 +257,8 @@ def run_en(scenario= None):
         data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import'] = max(data_output["df_participant_central_batt_import"].loc[time].sum(),0)
 
 
-
+    
+        
 
     # ----------------------------------------------------------------------------------------------------------------------------
     # Financial flows
@@ -273,6 +284,12 @@ def run_en(scenario= None):
     # --------------------------------------------------------------
     # Participant financial calcs
     # --------------------------------------------------------------
+    # Status Reporting
+    if status_callback:
+        status_callback('Calculating Financial Flows: 0%')
+        percent_finished = 0
+        single_step_percent = 100.0 / float(len(time_periods) * len(mynetwork.get_participants()))
+        
 
     for p in mynetwork.get_participants():
         # Initialise params used in block tariff calcs.
@@ -280,6 +297,9 @@ def run_en(scenario= None):
         previous_time = time_periods[0]
 
         for time in time_periods:
+            if status_callback:
+                percent_finished += single_step_percent
+                status_callback('Calculating Financial Flows: '+str(round(percent_finished))+"%")
             
             retail_tariff_type = p.get_retail_tariff_type()
             network_tariff_type = p.get_network_tariff_type()
@@ -386,9 +406,13 @@ def run_en(scenario= None):
     # --------------------------------------------------------------
     # DNSP financial calcs
     # --------------------------------------------------------------  
-    
+    if status_callback:
+        status_callback('Calculating DNSP Finances:0%')
+        percent_finished = 0
+        single_step_percent = 100.0 / float(len(time_periods) * len(mynetwork.get_participants()))
     # Initialise df used in demand tariff calcs (stores max demand values)      
     df_participant_max_monthly_demand = pd.DataFrame(0, index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]) 
+
 
     for p in mynetwork.get_participants():
         # Initialise params used in demand tariff calcs
@@ -396,7 +420,11 @@ def run_en(scenario= None):
         max_demand_time = time_periods[0]
         previous_month = time_periods[0].month
 
-        for time in time_periods:                
+        for time in time_periods:
+            # Update callback status
+            if status_callback:
+                percent_finished += single_step_percent
+                status_callback('Calculating DNSP Finances: '+str(round(percent_finished))+"%")       
 
             # Required energy flows for retailer / DNSP / TNSP calcs
             gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
@@ -500,6 +528,8 @@ def run_en(scenario= None):
     # --------------------------------------------------------------
     # Retailer financial calcs
     # --------------------------------------------------------------
+    if status_callback:
+        status_callback('Calculating Retail Finances')
     for time in time_periods:
         # print "Financial", time
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
@@ -557,9 +587,11 @@ def run_en_json(scenario=None):
 def run_en_csv(output_dir, scenario=None, status_callback=None):
     if status_callback:
         status_callback('Running EN CSV')
-        
-    result = run_en(scenario)
+
+    result = run_en(scenario, status_callback=status_callback)
     print "Writing to CSV"
+    if status_callback:
+        status_callback('Writing Output to CSV Files')
     battery_capacity = str(scenario['battery_capacity']) if 'battery_capacity' in scenario else ""
     # battery_capacity = str(network.get_batteries()[0].cap_kWh)+"kWh" if len(network.get_batteries()) > 0 else ""
     for label in result['financial_output']:
@@ -568,6 +600,9 @@ def run_en_csv(output_dir, scenario=None, status_callback=None):
     for label in result['data_output']:
         print label
         result['data_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label+battery_capacity+".csv"))
+    
+    if status_callback:
+        status_callback('Finished')
 
 
 
