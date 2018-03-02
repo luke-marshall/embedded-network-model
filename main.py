@@ -554,7 +554,10 @@ def run_en_json(scenario=None):
     return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
 
 
-def run_en_csv(output_dir, scenario=None):
+def run_en_csv(output_dir, scenario=None, status_callback=None):
+    if status_callback:
+        status_callback('Running EN CSV')
+        
     result = run_en(scenario)
     print "Writing to CSV"
     battery_capacity = str(scenario['battery_capacity']) if 'battery_capacity' in scenario else ""

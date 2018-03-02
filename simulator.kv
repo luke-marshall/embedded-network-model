@@ -1,0 +1,20 @@
+#:kivy 1.0.9
+
+	
+<SimulatorUI>:
+	orientation:'vertical'
+	Label:
+		id:heading
+		size_hint: (1,0.1)
+		font_size:30
+		text:"Local Energy Simulator"
+		center_x: root.width/2.0
+		center_y:root.height / 2.0
+
+	Button:
+		id:run_button
+		text:"Run Simulation"
+		on_press:root.run_simulation()
+	Label:
+		id:status
+		text:"Ready"
