@@ -1,5 +1,7 @@
 ui/node_modules/
 .vscode/settings.json
+output/*
 *.pyc
 
 *.pyc
+
