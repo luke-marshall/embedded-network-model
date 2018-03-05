@@ -10,6 +10,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
+from kivy.uix.slider import Slider
+
 
 import random
 import os
@@ -34,9 +36,10 @@ class SimulatorUI(BoxLayout):
         print "Simulation Running!"
         output_path = 'output' if not self.output_path else self.output_path
         data_path = 'data' if not self.data_path else self.data_path
-        print "Output:", self.output_path, "Data", data_path
+        battery_capacity = self.ids.battery_slider.value
+        print "Output:", self.output_path, "Data", data_path, "Battery Capacity", battery_capacity
         self.set_status("Simulation Running")
-        t = Thread(target=run_en_csv, args=(output_path, data_path, {'battery_capacity':0.001}, self.set_status))
+        t = Thread(target=run_en_csv, args=(output_path, data_path, {'battery_capacity':battery_capacity}, self.set_status))
         t.start()
 
     
@@ -48,8 +51,7 @@ class SimulatorUI(BoxLayout):
 
     def show_select_data_folder(self):
         content = LoadDialog(load=self.set_data_folder, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Select Output Folder", content=content,
-                            size_hint=(0.9, 0.9))
+        self._popup = Popup(title="Select Data Folder", content=content, size_hint=(0.9, 0.9))
         self._popup.open()
     
     def set_data_folder(self, path, filename):
@@ -62,8 +64,7 @@ class SimulatorUI(BoxLayout):
 
     def show_select_output_folder(self):
         content = LoadDialog(load=self.set_output_folder, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Select Output Folder", content=content,
-                            size_hint=(0.9, 0.9))
+        self._popup = Popup(title="Select Output Folder", content=content, size_hint=(0.9, 0.9))
         self._popup.open()
     
     def set_output_folder(self, path, filename):

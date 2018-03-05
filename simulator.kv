@@ -33,6 +33,22 @@
 		Label:
 			id:data_folder
 			text:"No Data Folder Selected"
+
+	BoxLayout:
+		orientation:'horizontal'
+		size_hint:(1,0.1)
+		Label:
+			id:battery_sizing
+			text:"Central Battery: "+str(round(battery_slider.value,2))+" MW"
+			size_hint:(0.3, 1)
+		Slider:
+			id:battery_slider
+			orientation:'horizontal'
+			min:0
+			max:10
+			value:1
+			value_track:True
+
 	Label:
 		id:status
 		text:"Ready"
