@@ -20,7 +20,7 @@ def getParticipantNames():
     headers.remove("date_time")
     return headers
 
-def run_en(scenario= None, status_callback=None):
+def run_en(scenario= None, status_callback=None, data_dir='data'):
     
     TIME_PERIOD_LENGTH_MINS = 30
 
@@ -29,17 +29,17 @@ def run_en(scenario= None, status_callback=None):
 
     # Create participants
 
-    participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",26)
-    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",14.8)
-    participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",27.5)
-    participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",3)
-    participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
-    participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",0)
+    participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),26)
+    participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),14.8)
+    participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),27.5)
+    participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),3)
+    participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
+    participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
 
     # participant_1 = Participant('building_1','solar','Business TOU','LV TOU <100MWh', 'ENOVA')
     # participant_2 = Participant('building_2','load','Business TOU','Small Business - Opt in Demand', 'ENOVA')
@@ -64,13 +64,13 @@ def run_en(scenario= None, status_callback=None):
     # See if the user has configured a battery capacity - if not, just use 1 MWh
     capacity = scenario['battery_capacity'] if 'battery_capacity' in scenario else 1
     # Create the battery object.
-    battery_1 = Central_Battery(capacity, capacity, 0.99, "data/ui_battery_discharge_window_eg.csv")
+    battery_1 = Central_Battery(capacity, capacity, 0.99, os.path.join(data_dir,"ui_battery_discharge_window_eg.csv"))
     # Add the battery to the network.
     mynetwork.add_central_battery(battery_1)
 
     # Add tariffs
-    # my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test")
-    my_tariffs = Tariffs('Test',"data/retail_tariffs.csv","data/duos.csv","test", "data/ui_tariffs_eg.csv")
+    # my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv",)"test")
+    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),"test", os.path.join(data_dir,"ui_tariffs_eg.csv"))
     # Generate a list of time periods in half hour increments
     start = datetime.datetime(year=2017,month=2,day=26,hour=4)
     end =  datetime.datetime(year=2017,month=2,day=27,hour=23)
@@ -584,11 +584,11 @@ def run_en_json(scenario=None):
     return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
 
 
-def run_en_csv(output_dir, scenario=None, status_callback=None):
+def run_en_csv(output_dir, data_dir, scenario=None, status_callback=None):
     if status_callback:
         status_callback('Running EN CSV')
 
-    result = run_en(scenario, status_callback=status_callback)
+    result = run_en(scenario, status_callback=status_callback, data_dir=data_dir)
     print "Writing to CSV"
     if status_callback:
         status_callback('Writing Output to CSV Files')
@@ -612,7 +612,7 @@ def run_en_csv(output_dir, scenario=None, status_callback=None):
 
 if __name__ == "__main__":
     print "Running Simulation: ",0, "kWh"
-    run_en_csv('output', {'battery_capacity':0.001})
+    run_en_csv('output', 'data', {'battery_capacity':0.001})
     # for battery_capacity in range(5,35,5):
     #     print "Running Simulation: ",battery_capacity, "kWh"
-    #     run_en_csv('output', {'battery_capacity':battery_capacity})
+    #     run_en_csv('output', 'data', {'battery_capacity':battery_capacity})
