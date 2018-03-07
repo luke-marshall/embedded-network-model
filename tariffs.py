@@ -3,14 +3,17 @@ import pandas as pd
 import datetime
 
 class Tariffs :
-    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path, ui_tariff_data_path):
+    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path, nuos_data_path, ui_tariff_data_path):
         self.scheme_name = scheme_name
         self.retail_tariff_data_path = retail_tariff_data_path
         self.duos_data_path = duos_data_path
         self.tuos_data_path = tuos_data_path
+        self.nuos_data_path = nuos_data_path
         # Get tariff data (note tuos not considered as yet)
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
+        self.tuos_tariff_data = pd.read_csv(tuos_data_path, index_col = ['offer_name'])
+        self.nuos_tariff_data = pd.read_csv(nuos_data_path, index_col = ['offer_name'])
         
         # TODO - For testing ahead of integration with UI
         self.ui_tariff_data_path = ui_tariff_data_path
@@ -176,22 +179,131 @@ class Tariffs :
         return self.central_battery_importing_ls_duos
 
     # Transmission use of service charges - will presumably be zero for local solar and battery import
-    def get_tuos_on_grid_import_fixed(self,fixed_period_minutes):
-        return 0.0
+    def get_tuos_on_grid_import_fixed(self,fixed_period_minutes, tuos_tariff_type):
+        fixed_tariff = self.tuos_tariff_data.loc[tuos_tariff_type,'daily_charge'] * (float(fixed_period_minutes)/float(60*24))
+        return fixed_tariff
 
-    def get_tuos_on_grid_import_variable(self,date_time):
-        return 0.0    
+    def get_tuos_on_grid_import_variable(self,date_time, tuos_tariff_type):    
+        """Variable tariff component from TUOS tariff data."""
+        # Get data from df
+        flat_charge = self.tuos_tariff_data.loc[tuos_tariff_type,'flat_charge']
+        peak_charge	= self.tuos_tariff_data.loc[tuos_tariff_type,'peak_charge']
+        shoulder_charge	= self.tuos_tariff_data.loc[tuos_tariff_type,'shoulder_charge']
+        offpeak_charge = self.tuos_tariff_data.loc[tuos_tariff_type,'offpeak_charge']
+        block_1_charge = self.tuos_tariff_data.loc[tuos_tariff_type,'block_1_charge']
+        block_2_charge = self.tuos_tariff_data.loc[tuos_tariff_type,'block_2_charge']
+        controlled_load	= self.tuos_tariff_data.loc[tuos_tariff_type,'controlled_load']
+        peak_start_time	= self.tuos_tariff_data.loc[tuos_tariff_type,'peak_start_time']
+        peak_end_time = self.tuos_tariff_data.loc[tuos_tariff_type,'peak_end_time']
+        peak_start_time_2 = self.tuos_tariff_data.loc[tuos_tariff_type,'peak_start_time_2']
+        peak_end_time_2	= self.tuos_tariff_data.loc[tuos_tariff_type,'peak_end_time_2']
+        shoulder_start_time	= self.tuos_tariff_data.loc[tuos_tariff_type,'shoulder_start_time']
+        shoulder_end_time = self.tuos_tariff_data.loc[tuos_tariff_type,'shoulder_end_time']
+        shoulder_start_time_2 = self.tuos_tariff_data.loc[tuos_tariff_type,'shoulder_start_time_2']
+        shoulder_end_time_2	= self.tuos_tariff_data.loc[tuos_tariff_type,'shoulder_end_time_2']
+        block_1_volume = self.tuos_tariff_data.loc[tuos_tariff_type,'block_1_volume']
+        block_2_volume = self.tuos_tariff_data.loc[tuos_tariff_type,'block_2_volume']
+        demand_charge = self.tuos_tariff_data.loc[tuos_tariff_type,'demand']
+        tou_weekday_only_flag = self.tuos_tariff_data.loc[tuos_tariff_type, 'tou_weekday_only_flag']
 
+        if tuos_tariff_type == 'Controlled Load 1':
+            variable_tariff = (controlled_load)
+
+        if tuos_tariff_type == 'Controlled Load 2':
+            variable_tariff = (controlled_load)
+
+        if tuos_tariff_type == 'LV Small Business Anytime':
+            variable_tariff = (flat_charge)           
+
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
+        if tuos_tariff_type == 'LV TOU <100MWh':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+        
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
+        if tuos_tariff_type == 'LV Business TOU_Interval meter':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+
+        if tuos_tariff_type == 'Small Business - Opt in Demand':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+
+        return variable_tariff
+
+    # TODO - should this be zero?
     def get_tuos_on_local_solar_import(self,date_time):
         return 0.0
 
+    # TODO - should this be zero?
     def get_tuos_on_central_batt_import(self,date_time):
         """This is the TUOS paid by the customer when consuming battery export."""
         return 0.0
     
+    # TODO - should this be zero?
     def get_tuos_on_central_batt_solar_import(self,date_time):
         """This is the TUOS paid by the battery when importing local solar."""
         return 0.0
+
+    # Network use of service charges (TUOS + DUOS + green schemes and friends) - will presumably be zero for local solar and battery import
+    def get_nuos_on_grid_import_fixed(self,fixed_period_minutes, nuos_tariff_type):
+        fixed_tariff = self.nuos_tariff_data.loc[nuos_tariff_type,'daily_charge'] * (float(fixed_period_minutes)/float(60*24))
+        return fixed_tariff
+
+    def get_nuos_on_grid_import_variable(self,date_time, nuos_tariff_type):
+        """Variable tariff component from NUOS tariff data."""
+        # Get data from df
+        flat_charge = self.nuos_tariff_data.loc[nuos_tariff_type,'flat_charge']
+        peak_charge	= self.nuos_tariff_data.loc[nuos_tariff_type,'peak_charge']
+        shoulder_charge	= self.nuos_tariff_data.loc[nuos_tariff_type,'shoulder_charge']
+        offpeak_charge = self.nuos_tariff_data.loc[nuos_tariff_type,'offpeak_charge']
+        block_1_charge = self.nuos_tariff_data.loc[nuos_tariff_type,'block_1_charge']
+        block_2_charge = self.nuos_tariff_data.loc[nuos_tariff_type,'block_2_charge']
+        controlled_load	= self.nuos_tariff_data.loc[nuos_tariff_type,'controlled_load']
+        peak_start_time	= self.nuos_tariff_data.loc[nuos_tariff_type,'peak_start_time']
+        peak_end_time = self.nuos_tariff_data.loc[nuos_tariff_type,'peak_end_time']
+        peak_start_time_2 = self.nuos_tariff_data.loc[nuos_tariff_type,'peak_start_time_2']
+        peak_end_time_2	= self.nuos_tariff_data.loc[nuos_tariff_type,'peak_end_time_2']
+        shoulder_start_time	= self.nuos_tariff_data.loc[nuos_tariff_type,'shoulder_start_time']
+        shoulder_end_time = self.nuos_tariff_data.loc[nuos_tariff_type,'shoulder_end_time']
+        shoulder_start_time_2 = self.nuos_tariff_data.loc[nuos_tariff_type,'shoulder_start_time_2']
+        shoulder_end_time_2	= self.nuos_tariff_data.loc[nuos_tariff_type,'shoulder_end_time_2']
+        block_1_volume = self.nuos_tariff_data.loc[nuos_tariff_type,'block_1_volume']
+        block_2_volume = self.nuos_tariff_data.loc[nuos_tariff_type,'block_2_volume']
+        demand_charge = self.nuos_tariff_data.loc[nuos_tariff_type,'demand']
+        tou_weekday_only_flag = self.nuos_tariff_data.loc[nuos_tariff_type, 'tou_weekday_only_flag']
+
+        if nuos_tariff_type == 'Controlled Load 1':
+            variable_tariff = (controlled_load)
+
+        if nuos_tariff_type == 'Controlled Load 2':
+            variable_tariff = (controlled_load)
+
+        if nuos_tariff_type == 'LV Small Business Anytime':
+            variable_tariff = (flat_charge)           
+
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
+        if nuos_tariff_type == 'LV TOU <100MWh':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+        
+        # Note, demand charge included in returned values to make calculations in main.py nicer to work with (avoid repeating TOU calcs for demand charge case)
+        if nuos_tariff_type == 'LV Business TOU_Interval meter':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+
+        if nuos_tariff_type == 'Small Business - Opt in Demand':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge)
+
+        return variable_tariff 
+
+
+    def get_nuos_on_local_solar_import(self,date_time):
+        return 0.0
+
+    def get_nuos_on_central_batt_import(self,date_time):
+        """This is the NUOS paid by the customer when consuming battery export."""
+        return 0.0
+    
+    def get_nuos_on_central_batt_solar_import(self,date_time):
+        """This is the NUOS paid by the battery when importing local solar."""
+        return 0.0
+
 
     # Things the retailer is paid (fixed retail charges, variable retail charges, local solar retail charges, central battery retail charges)
     def get_retail_income_on_local_solar_import(self,date_time):

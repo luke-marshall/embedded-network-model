@@ -70,7 +70,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
     # Add tariffs
     # my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv",)"test")
-    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),"test", os.path.join(data_dir,"ui_tariffs_eg.csv"))
+    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),"test", "test", os.path.join(data_dir,"ui_tariffs_eg.csv"))
     # Generate a list of time periods in half hour increments
     start = datetime.datetime(year=2017,month=2,day=26,hour=4)
     end =  datetime.datetime(year=2017,month=2,day=27,hour=23)
@@ -275,6 +275,9 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         "df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         # The df_participant_duos_payments df contains the amount paid by each participant in DUOS charges. This is summed to find the DNSP variable revenue from grid import
         "df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_participant_tuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        # Where nuos = duos + tuos + green scheme stuff
+        "df_participant_nuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         "df_dnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
         "df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
         "df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
