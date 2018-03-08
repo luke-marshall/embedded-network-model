@@ -70,7 +70,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
     # Add tariffs
     # my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv",)"test")
-    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),"test", "test", os.path.join(data_dir,"ui_tariffs_eg.csv"))
+    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"))
     # Generate a list of time periods in half hour increments
     start = datetime.datetime(year=2017,month=2,day=26,hour=4)
     end =  datetime.datetime(year=2017,month=2,day=27,hour=23)
