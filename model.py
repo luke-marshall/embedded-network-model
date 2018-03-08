@@ -327,7 +327,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
             financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
             
-            # Variable charges
+            # Variable charges - apply retail tariffs to external grid import
             # May be worth moving this section of code into util?
             
             # Block tariff ---------------
