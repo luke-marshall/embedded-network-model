@@ -518,15 +518,8 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         financial_output["df_dnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_dnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
 
     # --------------------------------------------------------------
-    # TNSP financial calcs - not used currently
+    # TNSP financial calcs 
     # --------------------------------------------------------------
-        # Financial calcs for TNSP
-        # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-        # financial_output["df_tnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_tuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
-        # financial_output["df_tnsp_revenue"].loc[time, 'grid_import_revenue_variable'] = my_tariffs.get_tuos_on_grid_import_variable(time) * gross_participant_grid_import
-        # financial_output["df_tnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_tuos_on_local_solar_import(time) * gross_participant_local_solar_import
-        # financial_output["df_tnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_tuos_on_central_batt_import(time) * gross_participant_central_battery_import
-        # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
     if status_callback:
         status_callback('Calculating TNSP Finances:0%')
         percent_finished = 0
