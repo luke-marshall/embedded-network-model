@@ -70,7 +70,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
     # Add tariffs
     # my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv",)"test")
-    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),"test", os.path.join(data_dir,"ui_tariffs_eg.csv"))
+    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"))
     # Generate a list of time periods in half hour increments
     start = datetime.datetime(year=2017,month=2,day=26,hour=4)
     end =  datetime.datetime(year=2017,month=2,day=27,hour=23)
@@ -275,8 +275,12 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         "df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         # The df_participant_duos_payments df contains the amount paid by each participant in DUOS charges. This is summed to find the DNSP variable revenue from grid import
         "df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        "df_participant_tuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+        # Where nuos = duos + tuos + green scheme stuff
+        "df_participant_nuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
         "df_dnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
         "df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
+        "df_nuos_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
         "df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
         "df_central_battery_revenue" : pd.DataFrame(0,index = time_periods, columns=['central_battery_revenue'])
         }
@@ -324,7 +328,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
             financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
             
-            # Variable charges
+            # Variable charges - apply retail tariffs to external grid import
             # May be worth moving this section of code into util?
             
             # Block tariff ---------------
@@ -515,15 +519,228 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         financial_output["df_dnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_dnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
 
     # --------------------------------------------------------------
-    # TNSP financial calcs - not used currently
+    # TNSP financial calcs 
     # --------------------------------------------------------------
-        # Financial calcs for TNSP
-        # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-        # financial_output["df_tnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_tuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
-        # financial_output["df_tnsp_revenue"].loc[time, 'grid_import_revenue_variable'] = my_tariffs.get_tuos_on_grid_import_variable(time) * gross_participant_grid_import
-        # financial_output["df_tnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_tuos_on_local_solar_import(time) * gross_participant_local_solar_import
-        # financial_output["df_tnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_tuos_on_central_batt_import(time) * gross_participant_central_battery_import
-        # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
+    if status_callback:
+        status_callback('Calculating TNSP Finances:0%')
+        percent_finished = 0
+        single_step_percent = 100.0 / float(len(time_periods) * len(mynetwork.get_participants()))
+    # Initialise df used in demand tariff calcs (stores max demand values)      
+    df_participant_max_monthly_demand = pd.DataFrame(0, index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]) 
+
+
+    for p in mynetwork.get_participants():
+        # Initialise params used in demand tariff calcs
+        max_demand = 0
+        max_demand_time = time_periods[0]
+        previous_month = time_periods[0].month
+
+        for time in time_periods:
+            # Update callback status
+            if status_callback:
+                percent_finished += single_step_percent
+                status_callback('Calculating TNSP Finances: '+str(round(percent_finished))+"%")       
+
+            # Required energy flows for retailer / DNSP / TNSP calcs
+            gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
+            gross_participant_local_solar_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import']
+            gross_participant_central_battery_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import']
+
+            # Financial calcs for TNSP
+            # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
+            financial_output["df_tnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_tuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
+            financial_output["df_tnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_tuos_on_local_solar_import(time) * gross_participant_local_solar_import
+            financial_output["df_tnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_tuos_on_central_batt_import(time) * gross_participant_central_battery_import
+
+            # Variable component - will need to be the sum of each individual participant's tnsp payment because each may be on a different tariff.
+            
+            network_tariff_type = p.get_network_tariff_type()
+
+            # Left over load which requires grid import. Calculated in energy flows above.
+            external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
+
+            # Controlled Load and Flat Tariffs ---------------
+            # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
+            if network_tariff_type == 'Controlled Load 1' or network_tariff_type == 'Controlled Load 2' or network_tariff_type == 'LV Small Business Anytime':
+                variable_tariff = my_tariffs.get_tuos_on_grid_import_variable(time, network_tariff_type)
+                financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
+
+            # TOU Tariffs ---------------
+            # The TOU tariffs will be applied by using if statements to determine whether peak/shoulder/off-peak
+            if network_tariff_type == 'LV TOU <100MWh' or network_tariff_type == 'LV Business TOU_Interval meter' or network_tariff_type == 'Small Business - Opt in Demand':
+                peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge = my_tariffs.get_tuos_on_grid_import_variable(time,network_tariff_type)
+
+                # If the TOU periods apply all days and not just weekdays then the flag will be zero
+                if tou_weekday_only_flag == 0 :
+                    # Check for whether it's a peak time
+                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                        variable_tariff = peak_charge
+                    # If not, check whether it's shoulder time
+                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                        variable_tariff = shoulder_charge
+
+                # In the case where TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
+                elif tou_weekday_only_flag == 1 and (time.weekday() >= 0 and time.weekday() <=4) :
+                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                        variable_tariff = peak_charge
+                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                        variable_tariff = shoulder_charge
+
+                # Else assume it's off-peak time
+                else:
+                    variable_tariff = offpeak_charge
+                # Apply the tariff 
+                financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
+            
+            # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
+            if network_tariff_type == 'Small Business - Opt in Demand' :
+                current_month = time.month
+                
+                # If it's a new month, then print the max demand value to the df at the max demand time, reset the max demand to zero and set the month to the new month.
+                if current_month != previous_month:
+                    # Print to df in units of power (kVA, assume unity pf)
+                    df_participant_max_monthly_demand.loc[max_demand_time, p.get_id()] = max_demand * (60/TIME_PERIOD_LENGTH_MINS)
+                    max_demand = 0
+                    previous_month = current_month
+
+                # Left over load which requires grid import. Calculated in energy flows above.
+                external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
+                
+                # If the load in this period is greater than the currently recorded max demand then update max demand and max demand time
+                if external_grid_import > max_demand :
+                    max_demand = external_grid_import
+                    max_demand_time = time
+
+                # In the case where there is less than 1 month of data (i.e. start and end months are the same) AND the loop is on the final time period, then print max to df.
+                if time_periods[0].month == time_periods[-1].month and time == time_periods[-1] :
+                    # Print to df in units of power (kVA, assume unity pf)
+                    df_participant_max_monthly_demand.loc[max_demand_time, p.get_id()] = max_demand * (60/TIME_PERIOD_LENGTH_MINS)
+        
+        # After looping through all time periods for the current participant
+        if network_tariff_type == 'Small Business - Opt in Demand' :
+            # Need a separate time loop to calculate demand charges since the max kVA values are entered into the df 'retrospectively'
+            for time in time_periods:
+                demand_payment = df_participant_max_monthly_demand.loc[time, p.get_id()] * demand_charge
+                financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] + demand_payment
+    
+    # Finally, calculate the sum across participants to find the TNSP's variable TUOS revenue. Then calculate the TNSP's total revenue (i.e. including fixed charges etc).
+    financial_output["df_tnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_tuos_payments"].sum(axis=1)
+    # Sum across columns for total tnsp revenue 
+    for time in time_periods:    
+        financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
+
+    # --------------------------------------------------------------
+    # NUOS financial calcs - NOTE this is not paid to a specific entity as NUOS = DUOS + TUOS + green schemes
+    # --------------------------------------------------------------
+    if status_callback:
+        status_callback('Calculating NUOS Finances:0%')
+        percent_finished = 0
+        single_step_percent = 100.0 / float(len(time_periods) * len(mynetwork.get_participants()))
+    # Initialise df used in demand tariff calcs (stores max demand values)      
+    df_participant_max_monthly_demand = pd.DataFrame(0, index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]) 
+
+
+    for p in mynetwork.get_participants():
+        # Initialise params used in demand tariff calcs
+        max_demand = 0
+        max_demand_time = time_periods[0]
+        previous_month = time_periods[0].month
+
+        for time in time_periods:
+            # Update callback status
+            if status_callback:
+                percent_finished += single_step_percent
+                status_callback('Calculating NUOS Finances: '+str(round(percent_finished))+"%")       
+
+            # Required energy flows for retailer / DNSP / TNSP calcs
+            gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
+            gross_participant_local_solar_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import']
+            gross_participant_central_battery_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import']
+
+            # Financial calcs for NUOS
+            # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
+            financial_output["df_nuos_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_nuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
+            financial_output["df_nuos_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_nuos_on_local_solar_import(time) * gross_participant_local_solar_import
+            financial_output["df_nuos_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_nuos_on_central_batt_import(time) * gross_participant_central_battery_import
+
+            # Variable component - will need to be the sum of each individual participant's NUOS payment because each may be on a different tariff.
+            
+            network_tariff_type = p.get_network_tariff_type()
+
+            # Left over load which requires grid import. Calculated in energy flows above.
+            external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
+
+            # Controlled Load and Flat Tariffs ---------------
+            # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
+            if network_tariff_type == 'Controlled Load 1' or network_tariff_type == 'Controlled Load 2' or network_tariff_type == 'LV Small Business Anytime':
+                variable_tariff = my_tariffs.get_nuos_on_grid_import_variable(time, network_tariff_type)
+                financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
+
+            # TOU Tariffs ---------------
+            # The TOU tariffs will be applied by using if statements to determine whether peak/shoulder/off-peak
+            if network_tariff_type == 'LV TOU <100MWh' or network_tariff_type == 'LV Business TOU_Interval meter' or network_tariff_type == 'Small Business - Opt in Demand':
+                peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, demand_charge = my_tariffs.get_nuos_on_grid_import_variable(time,network_tariff_type)
+
+                # If the TOU periods apply all days and not just weekdays then the flag will be zero
+                if tou_weekday_only_flag == 0 :
+                    # Check for whether it's a peak time
+                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                        variable_tariff = peak_charge
+                    # If not, check whether it's shoulder time
+                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                        variable_tariff = shoulder_charge
+
+                # In the case where TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
+                elif tou_weekday_only_flag == 1 and (time.weekday() >= 0 and time.weekday() <=4) :
+                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                        variable_tariff = peak_charge
+                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                        variable_tariff = shoulder_charge
+
+                # Else assume it's off-peak time
+                else:
+                    variable_tariff = offpeak_charge
+                # Apply the tariff 
+                financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
+            
+            # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
+            if network_tariff_type == 'Small Business - Opt in Demand' :
+                current_month = time.month
+                
+                # If it's a new month, then print the max demand value to the df at the max demand time, reset the max demand to zero and set the month to the new month.
+                if current_month != previous_month:
+                    # Print to df in units of power (kVA, assume unity pf)
+                    df_participant_max_monthly_demand.loc[max_demand_time, p.get_id()] = max_demand * (60/TIME_PERIOD_LENGTH_MINS)
+                    max_demand = 0
+                    previous_month = current_month
+
+                # Left over load which requires grid import. Calculated in energy flows above.
+                external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
+                
+                # If the load in this period is greater than the currently recorded max demand then update max demand and max demand time
+                if external_grid_import > max_demand :
+                    max_demand = external_grid_import
+                    max_demand_time = time
+
+                # In the case where there is less than 1 month of data (i.e. start and end months are the same) AND the loop is on the final time period, then print max to df.
+                if time_periods[0].month == time_periods[-1].month and time == time_periods[-1] :
+                    # Print to df in units of power (kVA, assume unity pf)
+                    df_participant_max_monthly_demand.loc[max_demand_time, p.get_id()] = max_demand * (60/TIME_PERIOD_LENGTH_MINS)
+        
+        # After looping through all time periods for the current participant
+        if network_tariff_type == 'Small Business - Opt in Demand' :
+            # Need a separate time loop to calculate demand charges since the max kVA values are entered into the df 'retrospectively'
+            for time in time_periods:
+                demand_payment = df_participant_max_monthly_demand.loc[time, p.get_id()] * demand_charge
+                financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] + demand_payment
+    
+    # Finally, calculate the sum across participants to find the total variable NUOS revenue. Then calculate the total NUOS revenue (i.e. including fixed charges etc).
+    financial_output["df_nuos_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_nuos_payments"].sum(axis=1)
+    # Sum across columns for total nuos revenue 
+    for time in time_periods:    
+        financial_output["df_nuos_revenue"].loc[time,'total_revenue'] = financial_output["df_nuos_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
+
+
 
     # --------------------------------------------------------------
     # Retailer financial calcs
