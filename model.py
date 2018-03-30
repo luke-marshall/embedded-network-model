@@ -766,7 +766,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # Calculate income for battery which is export(kWh) * export tariff for energy paid by consumer (c/kWh) minus import (kWh) * import tariff for energy paid by battery (c/kWh, includes energy,retail,NUOS)
         financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
 
-    return {'financial_output':financial_output, 'data_output':results.data_output}
+    return {'financial_output':financial_output, 'data_output':results.energy_output}
 
 def run_en_json(scenario=None):
     result = run_en(scenario)
@@ -796,8 +796,6 @@ def run_en_json(scenario=None):
                 # print col_header+": "+str(row[col_header])
             new_energy_output[key].append(row_dict)
 
-   
-    
     return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
 
 
