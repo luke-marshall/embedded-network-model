@@ -81,17 +81,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     time_periods = util.generate_dates_in_range(start, end, 30)
     
 
-    # # Make empty df
-    # data_output = {
-    #     "df_net_export" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-    #     "df_network_energy_flows" : pd.DataFrame(0,index = time_periods, columns=['net_participant_export', 'central_battery_export', 'unallocated_local_solar', 'unallocated_central_battery_load','gross_participant_grid_import','gross_participant_local_solar_import','gross_participant_central_battery_import']),
-    #     "df_local_solar_import" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-    #     "df_participant_central_batt_import" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-    #     "df_local_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-    #     "df_central_batt_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-    #     "df_export_to_grid_solar_sales" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-    #     "df_external_grid_elec_import": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
-    #     }
+   
 
     results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
     
@@ -107,24 +97,20 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # print "Energy",time
         # Calc each participant in/out kWh
         for p in mynetwork.get_participants():
-            # data_output['df_net_export'].loc[time,p.get_id()] =p.calc_net_export(time, 30) 
             results.set_net_export(time, p.get_id(), p.calc_net_export(time, 30))
 
         
         # Calc exces solar sharing / sales
         net_participant_export =  mynetwork.calc_total_participant_export(time, 30)
-        # data_output['df_network_energy_flows'].loc[time, 'net_participant_export'] = net_participant_export
         results.set_net_participant_export(time, net_participant_export)
         
         # Calc central battery in/out kWh
         central_battery_export = sum(b.make_export_decision(net_participant_export, time) for b in mynetwork.get_batteries())
         # central_battery_export = sum(b.make_export_decision(net_participant_export) for b in mynetwork.get_batteries())
 
-        # data_output['df_network_energy_flows'].loc[time, 'central_battery_export'] = central_battery_export
         results.set_central_battery_export(time, central_battery_export)
 
         # Calc network in/out kWh
-        # data_output['df_network_energy_flows'].loc[time, 'net_network_export'] = net_participant_export + central_battery_export
         results.set_net_network_export(time, net_participant_export + central_battery_export)
 
         # Run local solar allocation algorithm
@@ -133,7 +119,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # Add net export data for participants with load
         for p in mynetwork.get_participants():
             # Get data point from df_net_export df
-            # net_export = data_output['df_net_export'].loc[time, p.get_id()]
             net_export = results.get_net_export(time, p.get_id())
             # If there is load (i.e. export < 0 ) add to list
             if net_export < 0 :
@@ -145,7 +130,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         available_batt = max(central_battery_export,0)
         available_solar = 0
         for participant in mynetwork.get_participants():
-            # net_export = data_output['df_net_export'].loc[time, col]
             net_export = results.get_net_export(time, participant.get_id())
             if net_export > 0 :
                 available_solar += net_export
@@ -166,7 +150,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 if solar_allocation > 0:
                     # Allocating solar 
                     local_solar_import = min(abs(solar_allocation), abs(participants_list_sorted.loc[p, 'net_export']))
-                    # data_output["df_local_solar_import"].loc[time, p] = local_solar_import
                     results.set_local_solar_import(time, p, local_solar_import)
                     # Find reject solar
                     reject_solar = solar_allocation - local_solar_import
@@ -185,14 +168,12 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 if battery_allocation > 0 and reject_solar <= 0 :
                     participant_net_export = participants_list_sorted.loc[p,'net_export']
                     participant_central_batt_import = min(abs(battery_allocation), abs(participant_net_export) - abs(local_solar_import))
-                    # data_output["df_participant_central_batt_import"].loc[time, p] = participant_central_batt_import
                     results.set_participant_central_batt_import(time, p, participant_central_batt_import)
                     available_batt -= participant_central_batt_import
                     battery_allocation = float(available_batt) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
                     
         # Save any solar left over after the allocation process to df_network_energy_flows
-        # data_output["df_network_energy_flows"].loc[time, 'unallocated_local_solar'] = available_solar
         results.set_unallocated_local_solar(time, available_solar)
 
         # Run local load allocation algorithm (aka solar sales)
@@ -201,7 +182,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # Add net export data for participants with generation
         for p in mynetwork.get_participants():
             # Get data point from df_net_export df
-            # net_export = data_output['df_net_export'].loc[time, p.get_id()]
             net_export = results.get_net_export(time, p.get_id())
             # If there is generation (i.e. export > 0 ) add to list
             if net_export > 0 :
@@ -214,8 +194,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         available_load = 0
         available_batt_charging_load = abs(min(central_battery_export,0))
 
-        # for col in data_output['df_net_export']:
-        #     net_export = data_output['df_net_export'].loc[time, col]
         #     # NOTE available load is positive
         #     if net_export < 0 :
         #         available_load += abs(net_export)
@@ -235,7 +213,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             for p in solar_sales_participant_list.index.values :
                 if load_allocation > 0:
                     participant_solar_sale = min(abs(load_allocation), abs(solar_sales_participant_list.loc[p,'net_export']))
-                    # data_output["df_local_solar_sales"].loc[time, p] = participant_solar_sale
                     results.set_local_solar_sales(time, p, participant_solar_sale)
                     reject_load = load_allocation - participant_solar_sale
                     available_load -= participant_solar_sale
@@ -248,7 +225,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
                 if available_batt_charging_load > 0 and reject_load <= 0 :
                     participant_solar_sale = min(abs(batt_charging_allocation), abs(solar_sales_participant_list.loc[p,'net_export']) - abs(participant_solar_sale))
-                    # data_output["df_central_batt_solar_sales"].loc[time, p] = participant_solar_sale
                     results.set_central_batt_solar_sales(time, p, participant_solar_sale)
                     available_batt_charging_load -= participant_solar_sale
                     batt_charging_allocation = float(available_batt_charging_load) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
@@ -258,34 +234,23 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # Grid impacts for each customer. Import from grid and solar export to grid.
         for p in mynetwork.get_participants():
             # First, solar export to grid
-            # net_export = data_output["df_net_export"].loc[time,p.get_id()]
             net_export = results.get_net_export(time, p.get_id())
-            # local_solar_sales = data_output["df_local_solar_sales"].loc[time,p.get_id()]
             local_solar_sales = results.get_local_solar_sales(time, p.get_id())
-            # central_battery_solar_sales = data_output["df_central_batt_solar_sales"].loc[time,p.get_id()]
             central_battery_solar_sales = results.get_central_batt_solar_sales(time, p.get_id())
             # Calc and save to df
             export_to_grid_solar_sales = max(0,net_export) - max(0,local_solar_sales) - max(0,central_battery_solar_sales)
-            # data_output["df_export_to_grid_solar_sales"].loc[time,p.get_id()] = export_to_grid_solar_sales
             results.set_export_to_grid_solar_sales(time, p.get_id(), export_to_grid_solar_sales)
             # Then, electricity import from grid
-            # local_solar_import = data_output["df_local_solar_import"].loc[time,p.get_id()]
             local_solar_import = results.get_local_solar_import(time, p.get_id())
-            # participant_central_batt_import = data_output["df_participant_central_batt_import"].loc[time,p.get_id()]
             participant_central_batt_import = results.get_participant_central_batt_import(time, p.get_id())
             # Left over load which requires grid import. Calc and save to df.
             external_grid_import = abs(min(net_export,0)) - abs(max(0,local_solar_import)) - abs(max(0,participant_central_batt_import))
-            # data_output["df_external_grid_elec_import"].loc[time,p.get_id()] = external_grid_import
             results.set_external_grid_elec_import(time, p.get_id(), external_grid_import)
 
         # Save any battery load left over after the allocation process to df_network_energy_flows
-        # data_output["df_network_energy_flows"].loc[time, 'unallocated_central_battery_load'] = available_batt_charging_load        
         results.set_unallocated_central_battery_load(time, available_batt_charging_load)
         
         # For the financial calcs for retailer/NSPs, calculate the gross grid import - i.e. how much did all the participants import during this time interval (only considers import - discards export). Also local solar and central battery import.
-        # data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] = abs(min(data_output['df_network_energy_flows'].loc[time, 'net_participant_export'],0))
-        # data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import'] = max(data_output['df_local_solar_import'].loc[time].sum(),0)
-        # data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import'] = max(data_output["df_participant_central_batt_import"].loc[time].sum(),0)
         results.set_gross_participant_grid_import(time, abs(min(results.get_net_participant_export(time),0)))
         results.set_gross_participant_local_solar_import(time, max( sum([results.get_local_solar_import(time, participant.get_id()) for participant in mynetwork.get_participants() ]) ,0))
         results.set_gross_participant_central_battery_import(time, max( sum( [results.get_participant_central_batt_import(time, participant.get_id()) for participant in mynetwork.get_participants()] ),0))
@@ -342,21 +307,14 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             retail_tariff_type = p.get_retail_tariff_type()
             network_tariff_type = p.get_network_tariff_type()
 
-            # net_export = data_output["df_net_export"].loc[time,p.get_id()]
             net_export = results.get_net_export(time, p.get_id())
-            # local_solar_import = data_output["df_local_solar_import"].loc[time,p.get_id()]
             local_solar_import = results.get_local_solar_import(time, p.get_id())
-            # participant_central_batt_import = data_output["df_participant_central_batt_import"].loc[time,p.get_id()]
             participant_central_batt_import = results.get_participant_central_batt_import(time, p.get_id())
-            # local_solar_sales = data_output["df_local_solar_sales"].loc[time,p.get_id()]
             local_solar_sales = results.get_local_solar_sales(time, p.get_id())
-            # central_batt_solar_sales = data_output["df_central_batt_solar_sales"].loc[time,p.get_id()]
             central_batt_solar_sales = results.get_central_batt_solar_sales(time, p.get_id())
             # Left over solar which is exported to the grid. Calculated in energy flows above.
-            # export_to_grid_solar_sales = data_output["df_export_to_grid_solar_sales"].loc[time,p.get_id()]
             export_to_grid_solar_sales = results.get_export_to_grid_solar_sales(time, p.get_id())
             # Left over load which requires grid import. Calculated in energy flows above.
-            # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
             external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
 
             
@@ -472,9 +430,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 status_callback('Calculating DNSP Finances: '+str(round(percent_finished))+"%")       
 
             # Required energy flows for retailer / DNSP / TNSP calcs
-            # gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
-            # gross_participant_local_solar_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import']
-            # gross_participant_central_battery_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import']
             gross_participant_grid_import = results.get_gross_participant_grid_import(time)
             gross_participant_local_solar_import = results.get_gross_participant_local_solar_import(time)
             gross_participant_central_battery_import = results.get_gross_participant_central_battery_import(time)
@@ -491,7 +446,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             network_tariff_type = p.get_network_tariff_type()
 
             # Left over load which requires grid import. Calculated in energy flows above.
-            # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
             external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
 
             # Controlled Load and Flat Tariffs ---------------
@@ -539,7 +493,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     previous_month = current_month
 
                 # Left over load which requires grid import. Calculated in energy flows above.
-                # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
                 external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
                 
                 # If the load in this period is greater than the currently recorded max demand then update max demand and max demand time
@@ -589,9 +542,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 status_callback('Calculating TNSP Finances: '+str(round(percent_finished))+"%")       
 
             # Required energy flows for retailer / DNSP / TNSP calcs
-            # gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
-            # gross_participant_local_solar_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import']
-            # gross_participant_central_battery_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import']
             gross_participant_grid_import = results.get_gross_participant_grid_import(time)
             gross_participant_local_solar_import = results.get_gross_participant_local_solar_import(time)
             gross_participant_central_battery_import = results.get_gross_participant_central_battery_import(time)
@@ -607,7 +557,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             network_tariff_type = p.get_network_tariff_type()
 
             # Left over load which requires grid import. Calculated in energy flows above.
-            # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
             external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
 
             # Controlled Load and Flat Tariffs ---------------
@@ -655,7 +604,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     previous_month = current_month
 
                 # Left over load which requires grid import. Calculated in energy flows above.
-                # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
                 external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
                 
                 # If the load in this period is greater than the currently recorded max demand then update max demand and max demand time
@@ -705,9 +653,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 status_callback('Calculating NUOS Finances: '+str(round(percent_finished))+"%")       
 
             # Required energy flows for retailer / DNSP / TNSP calcs
-            # gross_participant_grid_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_grid_import'] 
-            # gross_participant_local_solar_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_local_solar_import']
-            # gross_participant_central_battery_import = data_output["df_network_energy_flows"].loc[time, 'gross_participant_central_battery_import']
             gross_participant_grid_import = results.get_gross_participant_grid_import(time)
             gross_participant_local_solar_import = results.get_gross_participant_local_solar_import(time)
             gross_participant_central_battery_import = results.get_gross_participant_central_battery_import(time)
@@ -723,7 +668,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             network_tariff_type = p.get_network_tariff_type()
 
             # Left over load which requires grid import. Calculated in energy flows above.
-            # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
             external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
 
             # Controlled Load and Flat Tariffs ---------------
@@ -771,7 +715,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     previous_month = current_month
 
                 # Left over load which requires grid import. Calculated in energy flows above.
-                # external_grid_import = data_output["df_external_grid_elec_import"].loc[time,p.get_id()]
                 external_grid_import = results.get_external_grid_elec_import(time, p.get_id())
                 
                 # If the load in this period is greater than the currently recorded max demand then update max demand and max demand time
@@ -816,11 +759,9 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         
         # Central Battery revenue
         # Energy imported by the battery
-        # battery_import = data_output["df_central_batt_solar_sales"].loc[time].sum()
         battery_import = sum([results.get_central_batt_solar_sales(time, participant.get_id()) for participant in mynetwork.get_participants()])
         # Energy exported by the battery
         # TODO - will need to update thif is the battery can also import from the grid.
-        # battery_export = data_output["df_participant_central_batt_import"].loc[time].sum()
         battery_export = sum([results.get_participant_central_batt_import(time, participant.get_id()) for participant in mynetwork.get_participants()])
         # Calculate income for battery which is export(kWh) * export tariff for energy paid by consumer (c/kWh) minus import (kWh) * import tariff for energy paid by battery (c/kWh, includes energy,retail,NUOS)
         financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
