@@ -93,7 +93,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     #     "df_external_grid_elec_import": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()])
     #     }
 
-    results = Results(time_periods)
+    results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
     
     if status_callback:
         status_callback('Performing Energy Calculations: 0%')
@@ -149,7 +149,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             net_export = results.get_net_export(time, participant.get_id())
             if net_export > 0 :
                 available_solar += net_export
-        available_solar = results.get_total_available_solar(time)
+        
         
         # If there exist participants with load then allocate solar
         if len(participants_list_sorted) != 0 :
@@ -167,7 +167,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     # Allocating solar 
                     local_solar_import = min(abs(solar_allocation), abs(participants_list_sorted.loc[p, 'net_export']))
                     # data_output["df_local_solar_import"].loc[time, p] = local_solar_import
-                    results.set_local_solar_import(time, p.get_id(), local_solar_import)
+                    results.set_local_solar_import(time, p, local_solar_import)
                     # Find reject solar
                     reject_solar = solar_allocation - local_solar_import
                     # Find new available solar (based on what was used)
@@ -186,7 +186,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     participant_net_export = participants_list_sorted.loc[p,'net_export']
                     participant_central_batt_import = min(abs(battery_allocation), abs(participant_net_export) - abs(local_solar_import))
                     # data_output["df_participant_central_batt_import"].loc[time, p] = participant_central_batt_import
-                    results.set_participant_central_batt_import(participant_central_batt_import)
+                    results.set_participant_central_batt_import(time, p, participant_central_batt_import)
                     available_batt -= participant_central_batt_import
                     battery_allocation = float(available_batt) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
@@ -221,7 +221,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         #         available_load += abs(net_export)
 
         for participant in mynetwork.get_participants():
-            net_export = self.get_net_export(time, participant.get_id())
+            net_export = results.get_net_export(time, participant.get_id())
             # NOTE available load is positive
             if net_export < 0 :
                 available_load += abs(net_export)
@@ -236,7 +236,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 if load_allocation > 0:
                     participant_solar_sale = min(abs(load_allocation), abs(solar_sales_participant_list.loc[p,'net_export']))
                     # data_output["df_local_solar_sales"].loc[time, p] = participant_solar_sale
-                    results.set_local_solar_sales(time, p.get_id(), participant_solar_sale)
+                    results.set_local_solar_sales(time, p, participant_solar_sale)
                     reject_load = load_allocation - participant_solar_sale
                     available_load -= participant_solar_sale
                     num_remaining_participants -= 1
@@ -249,7 +249,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 if available_batt_charging_load > 0 and reject_load <= 0 :
                     participant_solar_sale = min(abs(batt_charging_allocation), abs(solar_sales_participant_list.loc[p,'net_export']) - abs(participant_solar_sale))
                     # data_output["df_central_batt_solar_sales"].loc[time, p] = participant_solar_sale
-                    results.set_central_batt_solar_sales(time, p.get_id(), participant_solar_sale)
+                    results.set_central_batt_solar_sales(time, p, participant_solar_sale)
                     available_batt_charging_load -= participant_solar_sale
                     batt_charging_allocation = float(available_batt_charging_load) / float(num_remaining_participants) if num_remaining_participants > 0 else 0
 
