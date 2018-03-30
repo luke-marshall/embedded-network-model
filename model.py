@@ -1,10 +1,12 @@
 
-
+# Custom modules
 from network import Network
 from participant import Participant, CSV_Participant
 from battery import Battery, Central_Battery
 from tariffs import Tariffs
 import util
+
+# Required 3rd party libraries
 import datetime
 import pandas as pd
 import numpy as np
@@ -73,7 +75,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"))
     # Generate a list of time periods in half hour increments
     start = datetime.datetime(year=2017,month=2,day=26,hour=4)
-    end =  datetime.datetime(year=2017,month=2,day=27,hour=23)
+    end =  datetime.datetime(year=2017,month=2,day=26,hour=24)
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23)
     time_periods = util.generate_dates_in_range(start, end, 30)
    
