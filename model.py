@@ -458,9 +458,9 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
             # Financial calcs for DNSP
             # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-            # financial_output["df_dnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_duos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
-            # financial_output["df_dnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_duos_on_local_solar_import(time) * gross_participant_local_solar_import
-            # financial_output["df_dnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_duos_on_central_batt_import(time) * gross_participant_central_battery_import
+            # results.financial_output["df_dnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_duos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
+            # results.financial_output["df_dnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_duos_on_local_solar_import(time) * gross_participant_local_solar_import
+            # results.financial_output["df_dnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_duos_on_central_batt_import(time) * gross_participant_central_battery_import
 
             results.set_dnsp_grid_import_revenue_fixed(time,  my_tariffs.get_duos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants()))
             results.set_dnsp_local_solar_import_revenue(time,  my_tariffs.get_duos_on_local_solar_import(time) * gross_participant_local_solar_import)
@@ -543,8 +543,11 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     
     # Finally, calculate the sum across participants to find the DNSP's variable DUOS revenue. Then calculate the DNSP's total revenue (i.e. including fixed charges etc).
     # financial_output["df_dnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_duos_payments"].sum(axis=1)
-    grid_import_revenue_variable = sum([results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()])
-    results.set_dnsp_grid_import_revenue_variable(time, grid_import_revenue_variable)
+    # grid_import_revenue_variable = results.financial_output["df_participant_duos_payments"].sum(axis=1)
+    
+    for time in time_periods:
+        grid_import_revenue_variable = sum([results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()])
+        results.set_dnsp_grid_import_revenue_variable(time, grid_import_revenue_variable)
     # Sum across columns for total dnsp revenue 
     for time in time_periods:
         # financial_output["df_dnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_dnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
@@ -666,8 +669,9 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     # Finally, calculate the sum across participants to find the TNSP's variable TUOS revenue. Then calculate the TNSP's total revenue (i.e. including fixed charges etc).
     # financial_output["df_tnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_tuos_payments"].sum(axis=1)
     # financial_output["df_tnsp_revenue"]['grid_import_revenue_variable'] = sum( [results.get_participant_tuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
-    tnsp_grid_import_revenue_variable = sum( [results.get_participant_tuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
-    results.set_tnsp_grid_import_revenue_variable(time, tnsp_grid_import_revenue_variable)
+    for time in time_periods:
+        tnsp_grid_import_revenue_variable = sum( [results.get_participant_tuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
+        results.set_tnsp_grid_import_revenue_variable(time, tnsp_grid_import_revenue_variable)
     # Sum across columns for total tnsp revenue 
     for time in time_periods:    
         # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
