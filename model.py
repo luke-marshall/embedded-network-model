@@ -85,11 +85,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     return results
 
 
-def run_en_json(scenario=None):
-    result = run_en(scenario)
-    return result.to_dict()
-
-
 def run_en_csv(output_dir, data_dir, scenario=None, status_callback=None):
     if status_callback:
         status_callback('Running EN CSV')
