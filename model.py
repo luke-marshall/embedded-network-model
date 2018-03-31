@@ -19,9 +19,6 @@ import os
 
 
 
-DEFAULT_LOAD_DATA_PATH = "data/essential_load_data_aie_26_feb_1_may.csv"
-TIME_PERIOD_LENGTH_MINS = 30
-
 
 def run_en(scenario= None, status_callback=None, data_dir='data'):
 
@@ -78,19 +75,14 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23)
     time_periods = util.generate_dates_in_range(start, end, 30)
 
-
+    # Create a results object to store the results of the simulations
     results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
-    
+    # Perform energy simulations and store the results in our results object.
     energy_sim.simulate(time_periods, mynetwork, my_tariffs, results, status_callback)
-
+    # Perform financial calculations based on the energy sim and store the results in our results object.
     financial_sim.simulate(time_periods, mynetwork, my_tariffs, results, status_callback)
 
-    # ----------------------------------------------------------------------------------------------------------------------------
-    # Financial flows
-
     return results
-
-
 
 
 def run_en_json(scenario=None):
@@ -114,12 +106,10 @@ def run_en_csv(output_dir, data_dir, scenario=None, status_callback=None):
 
 
 
-
-
 # Start here! :)
 
 if __name__ == "__main__":
-    print "Running Simulation: ",0, "kWh"
+    print "Running Simulation: ",0.001, "kWh"
     run_en_csv('output', 'data', {'battery_capacity':0.001})
     # for battery_capacity in range(5,35,5):
     #     print "Running Simulation: ",battery_capacity, "kWh"
