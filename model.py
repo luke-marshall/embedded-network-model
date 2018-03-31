@@ -549,7 +549,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     for time in time_periods:
         # financial_output["df_dnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_dnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         dnsp_total_revenue = results.get_dnsp_grid_import_revenue_fixed(time) + results.get_dnsp_grid_import_revenue_variable(time) + results.get_dnsp_local_solar_import_revenue(time) + results.get_dnsp_central_battery_import_revenue(time)
-        results.set_dnsp_total_revenue(dnsp_total_revenue)
+        results.set_dnsp_total_revenue(time, dnsp_total_revenue)
     # --------------------------------------------------------------
     # TNSP financial calcs 
     # --------------------------------------------------------------
