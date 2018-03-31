@@ -407,11 +407,11 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # Total bill
             # participant_variable_charge = financial_output["df_participant_variable_charge"].loc[time, p.get_id()]
             # local_solar_import_charge = financial_output["df_local_solar_import_charge"].loc[time, p.get_id()]
-            central_batt_import_charge = financial_output["df_central_batt_import_charge"].loc[time, p.get_id()]
-            local_solar_sales_revenue = financial_output["df_local_solar_sales_revenue"].loc[time, p.get_id()]
-            central_batt_solar_sales_revenue = financial_output["df_central_batt_solar_sales_revenue"].loc[time, p.get_id()]
-            export_to_grid_solar_sales_revenue = financial_output["df_export_to_grid_solar_sales_revenue"].loc[time, p.get_id()]
-            fixed_charge = financial_output["df_fixed_charge"].loc[time, p.get_id()]
+            # central_batt_import_charge = financial_output["df_central_batt_import_charge"].loc[time, p.get_id()]
+            # local_solar_sales_revenue = financial_output["df_local_solar_sales_revenue"].loc[time, p.get_id()]
+            # central_batt_solar_sales_revenue = financial_output["df_central_batt_solar_sales_revenue"].loc[time, p.get_id()]
+            # export_to_grid_solar_sales_revenue = financial_output["df_export_to_grid_solar_sales_revenue"].loc[time, p.get_id()]
+            # fixed_charge = financial_output["df_fixed_charge"].loc[time, p.get_id()]
 
             participant_variable_charge = results.get_participant_variable_charge(time, p.get_id())
             local_solar_import_charge = results.get_local_solar_import_charge(time, p.get_id())

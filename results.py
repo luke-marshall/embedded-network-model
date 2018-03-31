@@ -134,7 +134,7 @@ class Results():
 	# Financial Results
 	def set_participant_variable_charge(self, time, participant_id, value):
 		self.financial_output["df_participant_variable_charge"].loc[time, participant_id] = value
-	def get_participant_variable_charge(time, participant_id):
+	def get_participant_variable_charge(self, time, participant_id):
 		return self.financial_output["df_participant_variable_charge"].loc[time, participant_id]
 
 	def set_local_solar_import_charge(self, time, participant_id, value):
@@ -153,9 +153,9 @@ class Results():
 		return self.financial_output["df_local_solar_sales_revenue"].loc[time,participant_id]
 
 	def set_central_batt_solar_sales_revenue(self, time, participant_id, value):
-		financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id] = value
+		self.financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id] = value
 	def get_central_batt_solar_sales_revenue(self, time, participant_id):
-		return financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id]
+		return self.financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id]
 	
 	def set_export_to_grid_solar_sales_revenue(self, time, participant_id, value):
 		self.financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,participant_id] = value
