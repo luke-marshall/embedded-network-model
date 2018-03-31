@@ -79,12 +79,11 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     end =  datetime.datetime(year=2017,month=2,day=26,hour=23)
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23)
     time_periods = util.generate_dates_in_range(start, end, 30)
-    
 
-   
 
     results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
     
+
     if status_callback:
         status_callback('Performing Energy Calculations: 0%')
         percent_finished = 0
@@ -499,7 +498,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 results.set_participant_duos_payments(time, p.get_id(), new_duos_payment)
     
     # Finally, calculate the sum across participants to find the DNSP's variable DUOS revenue. Then calculate the DNSP's total revenue (i.e. including fixed charges etc).
-    
     for time in time_periods:
         grid_import_revenue_variable = sum([results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()])
         results.set_dnsp_grid_import_revenue_variable(time, grid_import_revenue_variable)
@@ -767,6 +765,22 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         results.set_central_battery_revenue(time, central_battery_revenue)
 
     return {'financial_output':results.financial_output, 'data_output':results.energy_output}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def run_en_json(scenario=None):
     result = run_en(scenario)
