@@ -522,12 +522,6 @@ def simulate(time_periods, mynetwork, my_tariffs, results, status_callback):
 
 
 
-
-
-
-
-
-
 def run_en(scenario= None, status_callback=None, data_dir='data'):
     
     
@@ -601,61 +595,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
 
 
-
-
-
-
-
-def run_en_json(scenario=None):
-    result = run_en(scenario)
-
-    financial_output = result['financial_output']
-    data_output = result['data_output']
-
-    new_financial_output = {}
-    for key in financial_output:
-        new_financial_output[key]=[]
-        for date, row in financial_output[key].T.iteritems():
-            row_dict = {'dt_str':str(date)}
-            for col_header in financial_output[key]:
-                row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
-            new_financial_output[key].append(row_dict)    
-                # print col_header+": "+str(row[col_header])
-    
-
-    new_energy_output = {}
-    for key in data_output:
-        new_energy_output[key]=[]
-        for date, row in data_output[key].T.iteritems():
-            row_dict = {'dt_str':str(date)}
-            for col_header in data_output[key]:
-                row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
-            
-                # print col_header+": "+str(row[col_header])
-            new_energy_output[key].append(row_dict)
-
-    return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
-
-
-def run_en_csv(output_dir, data_dir, scenario=None, status_callback=None):
-    if status_callback:
-        status_callback('Running EN CSV')
-
-    result = run_en(scenario, status_callback=status_callback, data_dir=data_dir)
-    print "Writing to CSV"
-    if status_callback:
-        status_callback('Writing Output to CSV Files')
-    battery_capacity = str(scenario['battery_capacity']) if 'battery_capacity' in scenario else ""
-    # battery_capacity = str(network.get_batteries()[0].cap_kWh)+"kWh" if len(network.get_batteries()) > 0 else ""
-    for label in result['financial_output']:
-        print label
-        result['financial_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label+battery_capacity+".csv"))
-    for label in result['data_output']:
-        print label
-        result['data_output'][label].to_csv(path_or_buf=os.path.join(output_dir, label+battery_capacity+".csv"))
-    
-    if status_callback:
-        status_callback('Finished')
 
 
 
