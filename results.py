@@ -139,47 +139,52 @@ class Results():
 
 	def set_local_solar_import_charge(self, time, participant_id, value):
 		self.financial_output["df_local_solar_import_charge"].loc[time,participant_id] = value
-	def get_local_solar_import_charge(self, time, participant_id, value):
+	def get_local_solar_import_charge(self, time, participant_id):
 		return self.financial_output["df_local_solar_import_charge"].loc[time,participant_id]
 	
 	def set_central_batt_import_charge(self, time, participant_id, value):
 		self.financial_output["df_central_batt_import_charge"].loc[time,participant_id] = value
-	def get_central_batt_import_charge(self, time, participant_id, value):
+	def get_central_batt_import_charge(self, time, participant_id):
 		return self.financial_output["df_central_batt_import_charge"].loc[time,participant_id]
 
 	def set_local_solar_sales_revenue(self, time, participant_id, value):
 		self.financial_output["df_local_solar_sales_revenue"].loc[time,participant_id] = value
-	def get_local_solar_sales_revenue(self, time, participant_id, value):
+	def get_local_solar_sales_revenue(self, time, participant_id):
 		return self.financial_output["df_local_solar_sales_revenue"].loc[time,participant_id]
+
+	def set_central_batt_solar_sales_revenue(self, time, participant_id, value):
+		financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id] = value
+	def get_central_batt_solar_sales_revenue(self, time, participant_id):
+		return financial_output["df_central_batt_solar_sales_revenue"].loc[time,participant_id]
 	
 	def set_export_to_grid_solar_sales_revenue(self, time, participant_id, value):
 		self.financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,participant_id] = value
-	def get_export_to_grid_solar_sales_revenue(self, time, participant_id, value):
+	def get_export_to_grid_solar_sales_revenue(self, time, participant_id):
 		return self.financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,participant_id]
 	
 	def set_fixed_charge(self, time, participant_id, value):
 		self.financial_output["df_fixed_charge"].loc[time,participant_id] = value
-	def get_fixed_charge(self, time, participant_id, value):
+	def get_fixed_charge(self, time, participant_id):
 		return self.financial_output["df_fixed_charge"].loc[time,participant_id]
 
 	def set_total_participant_bill(self, time, participant_id, value):
 		self.financial_output["df_total_participant_bill"].loc[time,participant_id] = value
-	def get_total_participant_bill(self, time, participant_id, value):
+	def get_total_participant_bill(self, time, participant_id):
 		return self.financial_output["df_total_participant_bill"].loc[time,participant_id]
 
 	def set_participant_duos_payments(self, time, participant_id, value):
 		self.financial_output["df_participant_duos_payments"].loc[time,participant_id] = value
-	def get_participant_duos_payments(self, time, participant_id, value):
+	def get_participant_duos_payments(self, time, participant_id):
 		return self.financial_output["df_participant_duos_payments"].loc[time,participant_id]
 
 	def set_participant_tuos_payments(self, time, participant_id, value):
 		self.financial_output["df_participant_tuos_payments"].loc[time,participant_id] = value
-	def get_participant_tuos_payments(self, time, participant_id, value):
+	def get_participant_tuos_payments(self, time, participant_id):
 		return self.financial_output["df_participant_tuos_payments"].loc[time,participant_id]
 
 	def set_participant_nuos_payments(self, time, participant_id, value):
 		self.financial_output["df_participant_nuos_payments"].loc[time,participant_id] = value
-	def get_participant_nuos_payments(self, time, participant_id, value):
+	def get_participant_nuos_payments(self, time, participant_id):
 		return self.financial_output["df_participant_nuos_payments"].loc[time,participant_id]
 
 	def set_central_battery_revenue(self, time, value):
