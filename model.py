@@ -262,27 +262,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     # ----------------------------------------------------------------------------------------------------------------------------
     # Financial flows
 
-    # Charges are positive (if earning money then negative). Revenue is positive when earning money.
-    financial_output = {
-        # "df_participant_variable_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_local_solar_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        # "df_central_batt_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        # "df_local_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-        # "df_central_batt_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_export_to_grid_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_fixed_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # The df_participant_duos_payments df contains the amount paid by each participant in DUOS charges. This is summed to find the DNSP variable revenue from grid import
-        # "df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_participant_tuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # Where nuos = duos + tuos + green scheme stuff
-        # "df_participant_nuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-        # "df_dnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        # "df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        # "df_nuos_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        # "df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
-        # "df_central_battery_revenue" : pd.DataFrame(0,index = time_periods, columns=['central_battery_revenue'])
-        }
+    
 
     # --------------------------------------------------------------
     # Participant financial calcs
@@ -320,12 +300,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             
             # Calc resultant financial flows (all except variable charge - this is done below)
             
-            # financial_output["df_local_solar_import_charge"].loc[time,p.get_id()] = my_tariffs.get_local_solar_import_tariff(time) * local_solar_import
-            # financial_output["df_central_batt_import_charge"].loc[time,p.get_id()] = my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import
-            # financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_export_tariff(time) * local_solar_sales
-            # financial_output["df_central_batt_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_central_batt_buy_tariff(time) * central_batt_solar_sales
-            # financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
-            # financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
 
             results.set_local_solar_import_charge(time, p.get_id(),  my_tariffs.get_local_solar_import_tariff(time) * local_solar_import)
             results.set_central_batt_import_charge(time, p.get_id(),  my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import)
@@ -361,7 +335,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                     variable_tariff = block_2_charge
 
                 # Apply the tariff 
-                # financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_variable_charge(time, p.get_id(), variable_tariff * external_grid_import)
                 
             
@@ -394,24 +367,15 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 else:
                     variable_tariff = offpeak_charge
                 # Apply the tariff
-                # financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_variable_charge(time, p.get_id(),variable_tariff * external_grid_import )
 
             # Controlled Load and Flat Tariffs ---------------
             # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
             if retail_tariff_type == 'Controlled Load 1' or retail_tariff_type == 'Controlled Load 2' or retail_tariff_type == 'flat_charge':
                 variable_tariff = my_tariffs.get_variable_tariff(time, retail_tariff_type)
-                # financial_output["df_participant_variable_charge"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_variable_charge(time, p.get_id(),variable_tariff * external_grid_import )
             
             # Total bill
-            # participant_variable_charge = financial_output["df_participant_variable_charge"].loc[time, p.get_id()]
-            # local_solar_import_charge = financial_output["df_local_solar_import_charge"].loc[time, p.get_id()]
-            # central_batt_import_charge = financial_output["df_central_batt_import_charge"].loc[time, p.get_id()]
-            # local_solar_sales_revenue = financial_output["df_local_solar_sales_revenue"].loc[time, p.get_id()]
-            # central_batt_solar_sales_revenue = financial_output["df_central_batt_solar_sales_revenue"].loc[time, p.get_id()]
-            # export_to_grid_solar_sales_revenue = financial_output["df_export_to_grid_solar_sales_revenue"].loc[time, p.get_id()]
-            # fixed_charge = financial_output["df_fixed_charge"].loc[time, p.get_id()]
 
             participant_variable_charge = results.get_participant_variable_charge(time, p.get_id())
             local_solar_import_charge = results.get_local_solar_import_charge(time, p.get_id())
@@ -422,7 +386,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             fixed_charge = results.get_fixed_charge(time, p.get_id())
 
             # Add charges and subtract revenue for total bill
-            # financial_output["df_total_participant_bill"].loc[time,p.get_id()] = participant_variable_charge + local_solar_import_charge + central_batt_import_charge + fixed_charge - local_solar_sales_revenue - central_batt_solar_sales_revenue - export_to_grid_solar_sales_revenue 
             total_bill = participant_variable_charge + local_solar_import_charge + central_batt_import_charge + fixed_charge - local_solar_sales_revenue - central_batt_solar_sales_revenue - export_to_grid_solar_sales_revenue 
             results.set_total_participant_bill(time, p.get_id(), total_bill)
 
@@ -458,9 +421,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
             # Financial calcs for DNSP
             # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-            # results.financial_output["df_dnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_duos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
-            # results.financial_output["df_dnsp_revenue"].loc[time, 'local_solar_import_revenue'] = my_tariffs.get_duos_on_local_solar_import(time) * gross_participant_local_solar_import
-            # results.financial_output["df_dnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_duos_on_central_batt_import(time) * gross_participant_central_battery_import
 
             results.set_dnsp_grid_import_revenue_fixed(time,  my_tariffs.get_duos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants()))
             results.set_dnsp_local_solar_import_revenue(time,  my_tariffs.get_duos_on_local_solar_import(time) * gross_participant_local_solar_import)
@@ -477,7 +437,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
             if network_tariff_type == 'Controlled Load 1' or network_tariff_type == 'Controlled Load 2' or network_tariff_type == 'LV Small Business Anytime':
                 variable_tariff = my_tariffs.get_duos_on_grid_import_variable(time, network_tariff_type)
-                # financial_output["df_participant_duos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_duos_payments(time, p.get_id(), variable_tariff * external_grid_import)
 
             # TOU Tariffs ---------------
@@ -505,7 +464,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 else:
                     variable_tariff = offpeak_charge
                 # Apply the tariff 
-                # financial_output["df_participant_duos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_duos_payments(time, p.get_id(),variable_tariff * external_grid_import )
             
             # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
@@ -537,20 +495,16 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # Need a separate time loop to calculate demand charges since the max kVA values are entered into the df 'retrospectively'
             for time in time_periods:
                 demand_payment = df_participant_max_monthly_demand.loc[time, p.get_id()] * demand_charge
-                # financial_output["df_participant_duos_payments"].loc[time,p.get_id()] = financial_output["df_participant_duos_payments"].loc[time,p.get_id()] + demand_payment
                 new_duos_payment = results.get_participant_duos_payments(time, p.get_id()) + demand_payment
                 results.set_participant_duos_payments(time, p.get_id(), new_duos_payment)
     
     # Finally, calculate the sum across participants to find the DNSP's variable DUOS revenue. Then calculate the DNSP's total revenue (i.e. including fixed charges etc).
-    # financial_output["df_dnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_duos_payments"].sum(axis=1)
-    # grid_import_revenue_variable = results.financial_output["df_participant_duos_payments"].sum(axis=1)
     
     for time in time_periods:
         grid_import_revenue_variable = sum([results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()])
         results.set_dnsp_grid_import_revenue_variable(time, grid_import_revenue_variable)
     # Sum across columns for total dnsp revenue 
     for time in time_periods:
-        # financial_output["df_dnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_dnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         dnsp_total_revenue = results.get_dnsp_grid_import_revenue_fixed(time) + results.get_dnsp_grid_import_revenue_variable(time) + results.get_dnsp_local_solar_import_revenue(time) + results.get_dnsp_central_battery_import_revenue(time)
         results.set_dnsp_total_revenue(time, dnsp_total_revenue)
     # --------------------------------------------------------------
@@ -583,9 +537,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
             # Financial calcs for TNSP
             # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-            # financial_output["df_tnsp_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_tuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
-            # financial_output["df_tnsp_revenue"].loc[time,'local_solar_import_revenue'] = my_tariffs.get_tuos_on_local_solar_import(time) * gross_participant_local_solar_import
-            # financial_output["df_tnsp_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_tuos_on_central_batt_import(time) * gross_participant_central_battery_import
 
             results.set_tnsp_grid_import_revenue_fixed(time, my_tariffs.get_tuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants()))
             results.set_tnsp_local_solar_import_revenue(time, my_tariffs.get_tuos_on_local_solar_import(time) * gross_participant_local_solar_import)
@@ -602,7 +553,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
             if network_tariff_type == 'Controlled Load 1' or network_tariff_type == 'Controlled Load 2' or network_tariff_type == 'LV Small Business Anytime':
                 variable_tariff = my_tariffs.get_tuos_on_grid_import_variable(time, network_tariff_type)
-                # financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_tuos_payments(time, p.get_id(), variable_tariff * external_grid_import)
 
             # TOU Tariffs ---------------
@@ -630,7 +580,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 else:
                     variable_tariff = offpeak_charge
                 # Apply the tariff 
-                # financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_tuos_payments(time, p.get_id(), variable_tariff * external_grid_import)
             
             # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
@@ -662,19 +611,15 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # Need a separate time loop to calculate demand charges since the max kVA values are entered into the df 'retrospectively'
             for time in time_periods:
                 demand_payment = df_participant_max_monthly_demand.loc[time, p.get_id()] * demand_charge
-                # financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] = financial_output["df_participant_tuos_payments"].loc[time,p.get_id()] + demand_payment
                 new_tuos_payment = results.get_participant_tuos_payments(time, p.get_id())
                 results.set_participant_tuos_payments(time, p.get_id(), new_tuos_payment)
     
     # Finally, calculate the sum across participants to find the TNSP's variable TUOS revenue. Then calculate the TNSP's total revenue (i.e. including fixed charges etc).
-    # financial_output["df_tnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_tuos_payments"].sum(axis=1)
-    # financial_output["df_tnsp_revenue"]['grid_import_revenue_variable'] = sum( [results.get_participant_tuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
     for time in time_periods:
         tnsp_grid_import_revenue_variable = sum( [results.get_participant_tuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
         results.set_tnsp_grid_import_revenue_variable(time, tnsp_grid_import_revenue_variable)
     # Sum across columns for total tnsp revenue 
     for time in time_periods:    
-        # financial_output["df_tnsp_revenue"].loc[time,'total_revenue'] = financial_output["df_tnsp_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         tnsp_total_revenue = results.get_tnsp_grid_import_revenue_fixed(time) + results.get_tnsp_grid_import_revenue_variable(time) + results.get_tnsp_local_solar_import_revenue(time) + results.get_tnsp_central_battery_import_revenue(time)
         results.set_tnsp_total_revenue(time, tnsp_total_revenue)
     # --------------------------------------------------------------
@@ -707,9 +652,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
             # Financial calcs for NUOS
             # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
-            # financial_output["df_nuos_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_nuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants())
-            # financial_output["df_nuos_revenue"].loc[time,'local_solar_import_revenue'] = my_tariffs.get_nuos_on_local_solar_import(time) * gross_participant_local_solar_import
-            # financial_output["df_nuos_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_nuos_on_central_batt_import(time) * gross_participant_central_battery_import
 
             results.set_nuos_grid_import_revenue_fixed(time, my_tariffs.get_nuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants()))
             results.set_nuos_local_solar_import_revenue(time, my_tariffs.get_nuos_on_local_solar_import(time) * gross_participant_local_solar_import)
@@ -726,7 +668,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.
             if network_tariff_type == 'Controlled Load 1' or network_tariff_type == 'Controlled Load 2' or network_tariff_type == 'LV Small Business Anytime':
                 variable_tariff = my_tariffs.get_nuos_on_grid_import_variable(time, network_tariff_type)
-                # financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_nuos_payments(time, p.get_id(), variable_tariff * external_grid_import)
 
             # TOU Tariffs ---------------
@@ -754,7 +695,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
                 else:
                     variable_tariff = offpeak_charge
                 # Apply the tariff 
-                # financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = variable_tariff * external_grid_import
                 results.set_participant_nuos_payments(time, p.get_id(), variable_tariff * external_grid_import)
             
             # Demand tariff includes TOU component which is handled above. In addition, the demand component is calculated for each participant
@@ -786,18 +726,14 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # Need a separate time loop to calculate demand charges since the max kVA values are entered into the df 'retrospectively'
             for time in time_periods:
                 demand_payment = df_participant_max_monthly_demand.loc[time, p.get_id()] * demand_charge
-                # financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] = financial_output["df_participant_nuos_payments"].loc[time,p.get_id()] + demand_payment
                 new_nuos_payment = results.get_participant_nuos_payments(time, p.get_id()) + demand_payment
                 results.set_participant_nuos_payments(time, p.get_id(), new_nuos_payment)
     
     # Finally, calculate the sum across participants to find the total variable NUOS revenue. Then calculate the total NUOS revenue (i.e. including fixed charges etc).
-    # financial_output["df_nuos_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_nuos_payments"].sum(axis=1)
-    # financial_output["df_nuos_revenue"]['grid_import_revenue_variable'] = sum( [results.get_participant_nuos_payments(time, participant.get_id()) for participant inmynetwork.get_participants()] )
     nuos_grid_import_revenue_variable = sum( [results.get_participant_nuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
     results.set_nuos_grid_import_revenue_variable(time, nuos_grid_import_revenue_variable)
     # Sum across columns for total nuos revenue 
     for time in time_periods:    
-        # financial_output["df_nuos_revenue"].loc[time,'total_revenue'] = financial_output["df_nuos_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         nuos_total_revenue = results.get_nuos_grid_import_revenue_fixed(time) + results.get_nuos_grid_import_revenue_variable(time) + results.get_nuos_local_solar_import_revenue(time) + results.get_nuos_central_battery_import_revenue(time)
         results.set_nuos_total_revenue(time, nuos_total_revenue)
 
@@ -811,11 +747,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # print "Financial", time
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
         # TODO - check whether .sum() is working as expected! See test file.
-        # financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_fixed'] = my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants())
-        # financial_output["df_retailer_revenue"].loc[time,'grid_import_revenue_variable'] = my_tariffs.get_retail_income_on_grid_import_variable(time) * gross_participant_grid_import
-        # financial_output["df_retailer_revenue"].loc[time,'local_solar_import_revenue'] = my_tariffs.get_retail_income_on_local_solar_import(time) * gross_participant_local_solar_import
-        # financial_output["df_retailer_revenue"].loc[time,'central_battery_import_revenue'] = my_tariffs.get_retail_income_on_central_batt_import(time) * gross_participant_central_battery_import
-        # financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = financial_output["df_retailer_revenue"].loc[time,['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue']].sum()
         
         results.set_retailer_grid_import_revenue_fixed(time, my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants()))
         results.set_retailer_grid_import_revenue_variable(time, my_tariffs.get_retail_income_on_grid_import_variable(time) * gross_participant_grid_import)
@@ -832,8 +763,6 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
         # TODO - will need to update thif is the battery can also import from the grid.
         battery_export = sum([results.get_participant_central_batt_import(time, participant.get_id()) for participant in mynetwork.get_participants()])
         # Calculate income for battery which is export(kWh) * export tariff for energy paid by consumer (c/kWh) minus import (kWh) * import tariff for energy paid by battery (c/kWh, includes energy,retail,NUOS)
-        # financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
-        # financial_output["df_central_battery_revenue"].loc[time,'central_battery_revenue'] = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
         central_battery_revenue = battery_export * my_tariffs.get_central_batt_buy_tariff(time) - battery_import * my_tariffs.get_total_central_battery_import_tariff(time)
         results.set_central_battery_revenue(time, central_battery_revenue)
 
