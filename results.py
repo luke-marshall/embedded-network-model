@@ -1,5 +1,5 @@
 import pandas as pd
-
+import os
 
 class Results():
 	def __init__(self, time_periods, participant_ids):
@@ -35,7 +35,42 @@ class Results():
 			"df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
 			"df_central_battery_revenue" : pd.DataFrame(0,index = time_periods, columns=['central_battery_revenue'])
 			}
+	
+	def to_csv(self, output_dir, info_tag):
+		info_tag = str(info_tag)
+		for label in self.financial_output:
+			print label
+			self.financial_output[label].to_csv(path_or_buf=os.path.join(output_dir, label+info_tag+".csv"))
+		for label in self.energy_output:
+			print label
+			self.energy_output[label].to_csv(path_or_buf=os.path.join(output_dir, label+info_tag+".csv"))
+
+
+	def to_dict(self):
+		 
+		new_financial_output = {}
+		for key in self.financial_output:
+			new_financial_output[key]=[]
+			for date, row in self.financial_output[key].T.iteritems():
+				row_dict = {'dt_str':str(date)}
+				for col_header in financial_output[key]:
+					row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
+				new_financial_output[key].append(row_dict)    
+					# print col_header+": "+str(row[col_header])
 		
+
+		new_energy_output = {}
+		for key in self.energy_output:
+			new_energy_output[key]=[]
+			for date, row in self.energy_output[key].T.iteritems():
+				row_dict = {'dt_str':str(date)}
+				for col_header in energy_output[key]:
+					row_dict[col_header] = float(row[col_header]) if not pd.isnull(row[col_header]) else 0
+				
+					# print col_header+": "+str(row[col_header])
+				new_energy_output[key].append(row_dict)
+
+		return {'financial_output':new_financial_output, 'energy_output': new_energy_output}
 
 	def set_net_export(self, time, participant_id, value):
 		self.energy_output['df_net_export'].loc[time,participant_id] = value
