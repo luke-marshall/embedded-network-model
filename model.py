@@ -6,6 +6,8 @@ from battery import Battery, Central_Battery
 from tariffs import Tariffs
 import util
 from results import Results
+import energy_sim
+import financial_sim
 
 # Required 3rd party libraries
 import datetime
@@ -777,9 +779,9 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
 
     results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
     
-    simulate_energy(time_periods, mynetwork, my_tariffs, results, status_callback)
+    energy_sim.simulate(time_periods, mynetwork, my_tariffs, results, status_callback)
 
-    simulate_financial(time_periods, mynetwork, my_tariffs, results, status_callback)
+    financial_sim.simulate(time_periods, mynetwork, my_tariffs, results, status_callback)
 
     # ----------------------------------------------------------------------------------------------------------------------------
     # Financial flows
