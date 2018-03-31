@@ -16,19 +16,19 @@ class Results():
 			}
 		
 		self.financial_output = {
-			"df_participant_variable_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-			"df_local_solar_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-			"df_central_batt_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-			"df_local_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]), 
-			"df_central_batt_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-			"df_export_to_grid_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-			"df_fixed_charge" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-			"df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+			"df_participant_variable_charge" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
+			"df_local_solar_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]), 
+			"df_central_batt_import_charge" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]), 
+			"df_local_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]), 
+			"df_central_batt_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
+			"df_export_to_grid_solar_sales_revenue" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
+			"df_fixed_charge" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
+			"df_total_participant_bill" : pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
 			# The df_participant_duos_payments df contains the amount paid by each participant in DUOS charges. This is summed to find the DNSP variable revenue from grid import
-			"df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
-			"df_participant_tuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+			"df_participant_duos_payments": pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
+			"df_participant_tuos_payments": pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
 			# Where nuos = duos + tuos + green scheme stuff
-			"df_participant_nuos_payments": pd.DataFrame(0,index = time_periods, columns=[p.get_id() for p in mynetwork.get_participants()]),
+			"df_participant_nuos_payments": pd.DataFrame(0,index = time_periods, columns=[p for p in participant_ids]),
 			"df_dnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
 			"df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
 			"df_nuos_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),

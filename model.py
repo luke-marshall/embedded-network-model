@@ -321,11 +321,11 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
             # Calc resultant financial flows (all except variable charge - this is done below)
             
             # financial_output["df_local_solar_import_charge"].loc[time,p.get_id()] = my_tariffs.get_local_solar_import_tariff(time) * local_solar_import
-            financial_output["df_central_batt_import_charge"].loc[time,p.get_id()] = my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import
-            financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_export_tariff(time) * local_solar_sales
-            financial_output["df_central_batt_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_central_batt_buy_tariff(time) * central_batt_solar_sales
-            financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
-            financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
+            # financial_output["df_central_batt_import_charge"].loc[time,p.get_id()] = my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import
+            # financial_output["df_local_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_local_solar_export_tariff(time) * local_solar_sales
+            # financial_output["df_central_batt_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_central_batt_buy_tariff(time) * central_batt_solar_sales
+            # financial_output["df_export_to_grid_solar_sales_revenue"].loc[time,p.get_id()] = my_tariffs.get_retail_solar_tariff(time,retail_tariff_type,8) * export_to_grid_solar_sales
+            # financial_output["df_fixed_charge"].loc[time,p.get_id()] = my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS,retail_tariff_type)
 
             results.set_local_solar_import_charge(time, p.get_id(),  my_tariffs.get_local_solar_import_tariff(time) * local_solar_import)
             results.set_central_batt_import_charge(time, p.get_id(),  my_tariffs.get_central_batt_tariff(time) * participant_central_batt_import)
@@ -543,7 +543,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     
     # Finally, calculate the sum across participants to find the DNSP's variable DUOS revenue. Then calculate the DNSP's total revenue (i.e. including fixed charges etc).
     # financial_output["df_dnsp_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_duos_payments"].sum(axis=1)
-    grid_import_revenue_variable = sum[results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()]
+    grid_import_revenue_variable = sum([results.get_participant_duos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()])
     results.set_dnsp_grid_import_revenue_variable(time, grid_import_revenue_variable)
     # Sum across columns for total dnsp revenue 
     for time in time_periods:
@@ -789,7 +789,7 @@ def run_en(scenario= None, status_callback=None, data_dir='data'):
     # Finally, calculate the sum across participants to find the total variable NUOS revenue. Then calculate the total NUOS revenue (i.e. including fixed charges etc).
     # financial_output["df_nuos_revenue"]['grid_import_revenue_variable'] = financial_output["df_participant_nuos_payments"].sum(axis=1)
     # financial_output["df_nuos_revenue"]['grid_import_revenue_variable'] = sum( [results.get_participant_nuos_payments(time, participant.get_id()) for participant inmynetwork.get_participants()] )
-    nuos_grid_import_revenue_variable = sum( [results.get_participant_nuos_payments(time, participant.get_id()) for participant inmynetwork.get_participants()] )
+    nuos_grid_import_revenue_variable = sum( [results.get_participant_nuos_payments(time, participant.get_id()) for participant in mynetwork.get_participants()] )
     results.set_nuos_grid_import_revenue_variable(time, nuos_grid_import_revenue_variable)
     # Sum across columns for total nuos revenue 
     for time in time_periods:    
