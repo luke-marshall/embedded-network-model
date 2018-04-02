@@ -1,3 +1,7 @@
+# =====================================================
+# Imports - these are external bits of code that we use to make the model run properly.
+# =====================================================
+
 # Custom modules
 from network import Network
 from participant import Participant, CSV_Participant
@@ -16,7 +20,11 @@ import pprint
 import csv
 import os
 
+#  ==================
+# PROGRAM STARTS HERE
+#  ==================
 
+# Directories where input and output data lives.
 output_dir = 'output'
 data_dir ='data'
 
