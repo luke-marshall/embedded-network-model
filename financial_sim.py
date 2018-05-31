@@ -501,14 +501,20 @@ def simulate(time_periods, mynetwork, my_tariffs, results, status_callback=None)
         # print "Financial", time
         # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
         # TODO - check whether .sum() is working as expected! See test file.
+       
         
-        results.set_retailer_grid_import_revenue_fixed(time, my_tariffs.get_retail_income_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS) * len(mynetwork.get_participants()))
-        results.set_retailer_grid_import_revenue_variable(time, my_tariffs.get_retail_income_on_grid_import_variable(time) * gross_participant_grid_import)
-        results.set_retailer_local_solar_import_revenue(time, my_tariffs.get_retail_income_on_local_solar_import(time) * gross_participant_local_solar_import)
+        total_variable = sum([results.get_participant_variable_charge(time, p.get_id()) for p in mynetwork.get_participants()])
+        total_fixed = sum([my_tariffs.get_fixed_tariff(TIME_PERIOD_LENGTH_MINS, p.get_retail_tariff_type()) for p in mynetwork.get_participants()])
+        total_local_solar = sum([results.get_local_solar_import(time, p.get_id()) * my_tariffs.get_retail_income_on_local_solar_import(time) for p in mynetwork.get_participants()])
+
+        total_fit_payments = sum([results.get_export_to_grid_solar_sales_revenue(time, p.get_id()) for p in mynetwork.get_participants()])
+
+        results.set_retailer_grid_import_revenue_fixed(time, total_fixed)
+        results.set_retailer_grid_import_revenue_variable(time, total_variable)
+        results.set_retailer_local_solar_import_revenue(time, total_local_solar)
         results.set_retailer_central_battery_import_revenue(time, my_tariffs.get_retail_income_on_central_batt_import(time) * gross_participant_central_battery_import)
         total_retailer_revenue = results.get_retailer_grid_import_revenue_fixed(time) + results.get_retailer_grid_import_revenue_variable(time) + results.get_retailer_local_solar_import_revenue(time) + results.get_retailer_central_battery_import_revenue(time)
         results.set_retailer_total_revenue(time, total_retailer_revenue)
-
 
         # Central Battery revenue
         # Energy imported by the battery
