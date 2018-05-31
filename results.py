@@ -33,6 +33,7 @@ class Results():
 			"df_tnsp_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
 			"df_nuos_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
 			"df_retailer_revenue" : pd.DataFrame(0,index = time_periods, columns=['grid_import_revenue_fixed','grid_import_revenue_variable','local_solar_import_revenue','central_battery_import_revenue','total_revenue']),
+			"df_retailer_fit_payments" : pd.DataFrame(0,index = time_periods, columns=['solar_fit_payments',]),
 			"df_central_battery_revenue" : pd.DataFrame(0,index = time_periods, columns=['central_battery_revenue'])
 			}
 	
@@ -336,6 +337,12 @@ class Results():
 		self.financial_output["df_retailer_revenue"].loc[time,'total_revenue'] = value
 	def get_retailer_total_revenue(self, time):
 		return self.financial_output["df_retailer_revenue"].loc[time,'total_revenue']
+	
+	def set_retailer_solar_fit_payments(self, time, value):
+		self.financial_output["df_retailer_fit_payments"].loc[time,'solar_fit_payments'] = value
+	def get_retailer_solar_fit_payments(self, time):
+		return self.financial_output["df_retailer_fit_payments"].loc[time,'solar_fit_payments']
+	
 
 		
 	

@@ -30,8 +30,7 @@ class Tariffs :
         self.central_battery_importing_ls_retail = self.ui_tariff_data.loc['central_battery_importing_local_solar','retail_charge']
         self.central_battery_importing_ls_duos = self.ui_tariff_data.loc['central_battery_importing_local_solar','duos_charge']       
         # print(self.ui_tariff_data)
-        print("Retail Tariff Data:")
-        print(self.retail_tariff_data)
+        # print(self.retail_tariff_data)
         # print(self.duos_tariff_data)
     
     def get_variable_tariff(self, date_time, retail_tariff_type):
