@@ -30,7 +30,8 @@ class Tariffs :
         self.central_battery_importing_ls_retail = self.ui_tariff_data.loc['central_battery_importing_local_solar','retail_charge']
         self.central_battery_importing_ls_duos = self.ui_tariff_data.loc['central_battery_importing_local_solar','duos_charge']       
         # print(self.ui_tariff_data)
-        # print(self.retail_tariff_data)
+        print("Retail Tariff Data:")
+        print(self.retail_tariff_data)
         # print(self.duos_tariff_data)
     
     def get_variable_tariff(self, date_time, retail_tariff_type):
@@ -58,15 +59,14 @@ class Tariffs :
 
         if retail_tariff_type == 'Business Anytime':
             variable_tariff = (block_1_charge, block_2_charge, block_1_volume)
-
-        if retail_tariff_type == 'Business TOU':
+        elif retail_tariff_type == 'Business TOU':
             variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag)
-
-        if retail_tariff_type == 'Controlled Load 1':
+        elif retail_tariff_type == 'Controlled Load 1':
             variable_tariff = (controlled_load)
-        
-        if retail_tariff_type == 'Controlled Load 2':
+        elif retail_tariff_type == 'Controlled Load 2':
             variable_tariff = (controlled_load)
+        else:
+            raise ValueError('Retail tariff type not known:'+str(retail_tariff_type))
 
         return variable_tariff
 
@@ -316,14 +316,6 @@ class Tariffs :
     def get_retail_income_on_central_batt_solar_import(self,date_time):
         """This is the retailer charge paid by the battery when importing local solar."""
         return self.central_battery_importing_ls_retail
-    
-    # Maybe unnecessary - could possibly subtract network income from customer bill
-    def get_retail_income_on_grid_import_fixed(self,fixed_period_minutes):
-        """WARNING - does not contain actual values"""
-        return 0.0
-    def get_retail_income_on_grid_import_variable(self,date_time):
-        """WARNING - does not contain actual values"""
-        return 0.0
 
     # Total battery import tariff (i.e. what the battery has to pay when importing energy) Includes energy payment + NUOS payment + retail payment
     def get_total_central_battery_import_tariff(self, date_time):
