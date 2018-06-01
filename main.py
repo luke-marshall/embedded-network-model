@@ -31,7 +31,6 @@ class LoadDialog(FloatLayout):
 
 class SimulatorUI(BoxLayout):
     
-    
     def run_simulation(self):
         print "Simulation Running!"
         output_path = 'output' if not self.output_path else self.output_path

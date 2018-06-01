@@ -2,7 +2,7 @@
 
 import datetime
 import pendulum
-pendulum.set_formatter('alternative')
+
 
 def generate_dates_in_range(start_dt, end_dt, interval_minutes):
     """Return list of dates between start and end."""

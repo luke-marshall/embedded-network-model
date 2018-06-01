@@ -408,8 +408,8 @@ def simulate(time_periods, mynetwork, my_tariffs, results, status_callback=None)
             # Fixed charges revenue is the fixed charge times by the number of customers paying this charge
 
             results.set_nuos_grid_import_revenue_fixed(time, my_tariffs.get_nuos_on_grid_import_fixed(TIME_PERIOD_LENGTH_MINS, network_tariff_type) * len(mynetwork.get_participants()))
-            results.set_nuos_local_solar_import_revenue(time, my_tariffs.get_nuos_on_local_solar_import(time) * gross_participant_local_solar_import)
-            results.set_nuos_central_battery_import_revenue(time, my_tariffs.get_nuos_on_central_batt_import(time) * gross_participant_central_battery_import)
+            results.set_nuos_local_solar_import_revenue(time, my_tariffs.get_nuos_on_local_solar_import(time, network_tariff_type) * gross_participant_local_solar_import)
+            results.set_nuos_central_battery_import_revenue(time, my_tariffs.get_nuos_on_central_batt_import(time, network_tariff_type) * gross_participant_central_battery_import)
 
             # Variable component - will need to be the sum of each individual participant's NUOS payment because each may be on a different tariff.
             

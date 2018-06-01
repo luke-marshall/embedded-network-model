@@ -292,16 +292,16 @@ class Tariffs :
         return variable_tariff 
 
 
-    def get_nuos_on_local_solar_import(self,date_time):
-        return 0.0
+    def get_nuos_on_local_solar_import(self,date_time, nuos_tariff_type):
+        return self.nuos_tariff_data.loc[nuos_tariff_type,'local_solar_import']
 
-    def get_nuos_on_central_batt_import(self,date_time):
+    def get_nuos_on_central_batt_import(self,date_time, nuos_tariff_type):
         """This is the NUOS paid by the customer when consuming battery export."""
-        return 0.0
+        return self.nuos_tariff_data.loc[nuos_tariff_type,'central_battery_import']
     
-    def get_nuos_on_central_batt_solar_import(self,date_time):
+    def get_nuos_on_central_batt_solar_import(self,date_time, nuos_tariff_type):
         """This is the NUOS paid by the battery when importing local solar."""
-        return 0.0
+        return self.nuos_tariff_data.loc[nuos_tariff_type,'central_battery_local_solar_import']
 
 
     # Things the retailer is paid (fixed retail charges, variable retail charges, local solar retail charges, central battery retail charges)
