@@ -31,31 +31,8 @@ data_dir ='data'
 # Create a network - this stores information on the electricity network we want to model.
 mynetwork = Network('Byron')
 
-# Create participants - each participant has information about its generation, load and export decisions.
-participant_1 = CSV_Participant('participant_1','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_2 = CSV_Participant('participant_2','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_3 = CSV_Participant('participant_3','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_4 = CSV_Participant('participant_4','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),26)
-participant_5 = CSV_Participant('participant_5','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_6 = CSV_Participant('participant_6','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),14.8)
-participant_7 = CSV_Participant('participant_7','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_8 = CSV_Participant('participant_8','solar', 'Business TOU', 'LV TOU <100MWh','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),27.5)
-participant_9 = CSV_Participant('participant_9','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),3)
-participant_10 = CSV_Participant('participant_10','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-participant_11 = CSV_Participant('participant_11','solar', 'Business Anytime', 'LV Small Business Anytime','ENOVA',os.path.join(data_dir,"bb_pvoutput_solar_data_26_feb_1_may.csv"), os.path.join(data_dir,"essential_load_data_aie_26_feb_1_may.csv"),0)
-
-# Add the participants to the network.
-mynetwork.add_participant(participant_1)
-mynetwork.add_participant(participant_2)
-mynetwork.add_participant(participant_3)
-mynetwork.add_participant(participant_4)
-mynetwork.add_participant(participant_5)
-mynetwork.add_participant(participant_6)
-mynetwork.add_participant(participant_7)
-mynetwork.add_participant(participant_8)
-mynetwork.add_participant(participant_9)
-mynetwork.add_participant(participant_10)
-mynetwork.add_participant(participant_11)
+# Load the participants from a csv
+mynetwork.add_participants_from_csv(data_dir,"participant_meta_data.csv")
 
 # Create a central battery.
 battery_capacity = 0.001
