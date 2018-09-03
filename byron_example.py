@@ -25,7 +25,7 @@ import os
 #  ==================
 
 # Directories where input and output data lives.
-output_dir = 'output'
+output_dir = 'byron_output'
 data_dir ='data'
 
 # Create a network - this stores information on the electricity network we want to model.
