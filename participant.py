@@ -37,9 +37,9 @@ class CSV_Participant(Participant):
         load_data = pd.read_csv(load_path,index_col = 'date_time', parse_dates=False,  date_parser=util.date_parser)
         # Delete all cols not relevant to this participant
         self.load_data = load_data[participant_id]
+        self.solar_data = solar_data[participant_id]
         # Apply capacity to solar data
-        self.solar_data = solar_data['solar']
-        self.solar_data = solar_data * solar_capacity
+        self.solar_data = self.solar_data * solar_capacity
         # print solar_data
         
     def calc_net_export(self, date_time, interval_min):
