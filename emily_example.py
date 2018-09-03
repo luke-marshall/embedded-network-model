@@ -51,7 +51,7 @@ my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.
 
 # Define the start and end times of the simulation.
 start = datetime.datetime(year=2016,month=7,day=1,hour=2,minute=30)
-end = datetime.datetime(year=2016,month=7,day=2,hour=2,minute=30)
+end = datetime.datetime(year=2016,month=7,day=1,hour=4,minute=30)
 # end =  datetime.datetime(year=2016,month=7,day=30,hour=23) #this is an end time very near the start, good for testing code because we don't do many calculations.
 # end =  datetime.datetime(year=2017,month=4,day=30,hour=23) #this is the total end time for all the data in the byron model
 
@@ -61,9 +61,9 @@ time_periods = util.generate_dates_in_range(start, end, 30)
 results = Results(time_periods, [p.get_id() for p in mynetwork.get_participants()])
 print('About to run simulation')
 # Perform energy simulations and store the results in our results object.
-# energy_sim.simulate(time_periods, mynetwork, my_tariffs, results)
-# print('About to run financial sim')
-# # Perform financial calculations based on the energy sim and store the results in our results object.
-# financial_sim.simulate(time_periods, mynetwork, my_tariffs, results)
-# # Print to CSV files
-# results.to_csv(output_dir, info_tag=testname)
+energy_sim.simulate(time_periods, mynetwork, my_tariffs, results)
+print('About to run financial sim')
+# Perform financial calculations based on the energy sim and store the results in our results object.
+financial_sim.simulate(time_periods, mynetwork, my_tariffs, results)
+# Print to CSV files
+results.to_csv(output_dir, info_tag=testname)
