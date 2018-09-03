@@ -51,6 +51,6 @@ class CSV_Participant(Participant):
 
 
 if __name__ == "__main__":
-    participant = CSV_Participant('participant_1','solar', 'Business Anytime','LV Small Business Anytime', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/essential_load_data_aie_26_feb_1_may.csv",8)
+    participant = CSV_Participant('participant_1','solar', 'Business Anytime','LV Small Business Anytime', 'ENOVA',"data/bb_pvoutput_solar_data_26_feb_1_may.csv", "data/EN_1.csv",8)
 
     print(participant.calc_net_export(datetime.datetime(year=2017,month=2,day=27,hour=1),30))
