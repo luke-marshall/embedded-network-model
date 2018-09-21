@@ -64,6 +64,8 @@ class Tariffs :
             variable_tariff = (controlled_load)
         elif retail_tariff_type == 'Controlled Load 2':
             variable_tariff = (controlled_load)
+        elif retail_tariff_type == 'flat_charge':
+            variable_tariff = (flat_charge) 
         else:
             raise ValueError('Retail tariff type not known:'+str(retail_tariff_type))
 

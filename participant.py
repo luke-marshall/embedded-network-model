@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import datetime
 import util
+from lazy import lazy
 
 class Participant: 
     # Need to update to have both network and retail tariffs as inputs
@@ -28,7 +29,7 @@ class Participant:
     def get_network_tariff_type(self):
         return self.network_tariff_type
 
-class CSV_Participant(Participant):
+class CSV_Participant_OLD(Participant):
     def __init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer, solar_path, load_path, solar_capacity):
         Participant.__init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer)
         self.solar_path = solar_path
@@ -42,6 +43,38 @@ class CSV_Participant(Participant):
         self.solar_data = self.solar_data * solar_capacity
         # print solar_data
         
+    def calc_net_export(self, date_time, interval_min):
+        solar_data = float(self.solar_data.loc[date_time])
+        load_data = float(self.load_data.loc[date_time])
+        net_export = solar_data - load_data
+        return net_export
+
+
+class CSV_Participant(Participant):
+    def __init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer, solar_path, load_path, solar_capacity):
+        Participant.__init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer)
+        self.solar_path = solar_path
+        self.load_path = load_path
+        self.solar_path = solar_path
+        self.pid = participant_id
+        self.solar_capacity = solar_capacity
+        
+
+        if solar_capacity == 0:
+            self.participant_id = participant_id+'_non_solar'
+        else:
+            self.participant_id = participant_id+'_solar'
+             
+    @lazy
+    def solar_data(self):
+        solar_data = pd.read_csv(self.solar_path,index_col = 'date_time', parse_dates=True, date_parser=util.date_parser)
+        return solar_data[self.pid] * self.solar_capacity
+
+    @lazy
+    def load_data(self):
+        load_data = pd.read_csv(self.load_path,index_col = 'date_time', parse_dates=False,  date_parser=util.date_parser)
+        return load_data[self.pid]
+
     def calc_net_export(self, date_time, interval_min):
         solar_data = float(self.solar_data.loc[date_time])
         load_data = float(self.load_data.loc[date_time])

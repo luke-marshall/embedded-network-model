@@ -6,7 +6,7 @@ from os.path import isfile, join
 import csv
 from collections import OrderedDict
 
-def concatenate(input_directory="/mnt/c/Users/Emily/Documents/Test",outfile="concatenated.csv"):
+def concatenate(input_directory="/mnt/c/Users/user/Documents/Workspace/embedded-network-model/data/extras_Y",outfile="extras_Y.csv"):
     # os.chdir(input_directory)
     # fileList=glob.glob("*.csv")
     dfList=[]

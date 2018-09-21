@@ -1,61 +1,61 @@
 participant_id,participant_type,retail_tariff_type,network_tariff_type,retailer,solar_path,load_path,solar_capacity
-participant_sgsc_8179191,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8179193,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8179201,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8179203,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_11187547,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8179325,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184557,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8185307,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194183,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194293,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8196697,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8198461,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8199981,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_11187479,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8208299,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8143511,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8145435,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8147667,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8149627,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8150103,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8150621,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8154361,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8154379,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8158119,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8158169,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8162493,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8163687,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8164165,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8164189,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8164629,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8164917,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8168401,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8170269,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8170449,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8176603,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8181075,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8181131,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184621,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184657,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184717,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184761,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8184841,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8185081,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8185473,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8188425,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8188437,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8192177,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8192969,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8193367,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194445,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194455,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194487,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8194599,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8195329,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8196591,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8196593,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8196659,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8196663,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8199887,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
-participant_sgsc_8199905,solar,Business TOU,LV TOU <100MWh,ENOVA,emily_a300_solar_data.csv,EN_1.csv,0
+participant1,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant2,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant3,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant4,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant5,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant6,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant7,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant8,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant9,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant10,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant11,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant12,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant13,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant14,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant15,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant16,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant17,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant18,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant19,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant20,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant21,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant22,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant23,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant24,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant25,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant26,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant27,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant28,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant29,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant30,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant31,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant32,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant33,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant34,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant35,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant36,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant37,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant38,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant39,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant40,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant41,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant42,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant43,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant44,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant45,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant46,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant47,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant48,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant49,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant50,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant51,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant52,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant53,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant54,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant55,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant56,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant57,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant58,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant59,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0
+participant60,solar,flat_charge,LV TOU <100MWh,ENOVA,emily_solar_EN1.csv,EN_1f.csv,0

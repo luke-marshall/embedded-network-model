@@ -101,26 +101,29 @@ def simulate(time_periods, mynetwork, my_tariffs, results, status_callback=None)
                 # If the TOU periods apply all days and not just weekdays then the flag will be zero
                 if tou_weekday_only_flag == 0 :
                     # Check for whether it's a peak time
-                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                    if (time.hour >= peak_start_time and time.hour < peak_end_time) or (time.hour >= peak_start_time_2 and time.hour < peak_end_time_2) :
                         variable_tariff = peak_charge
                     # If not, check whether it's shoulder time
-                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                    elif (time.hour >= shoulder_start_time and time.hour < shoulder_end_time) or (time.hour >= shoulder_start_time_2 and time.hour < shoulder_end_time_2) :
                         variable_tariff = shoulder_charge
                     else:
                         variable_tariff = offpeak_charge
 
-                # In the case where TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
+                # In the case where PEAK TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
                 elif tou_weekday_only_flag == 1 and (time.weekday() >= 0 and time.weekday() <=4) :
-                    if (time.hour > peak_start_time and time.hour <= peak_end_time) or (time.hour > peak_start_time_2 and time.hour <= peak_end_time_2) :
+                    if (time.hour >= peak_start_time and time.hour < peak_end_time) or (time.hour >= peak_start_time_2 and time.hour < peak_end_time_2) :
                         variable_tariff = peak_charge
-                    elif (time.hour > shoulder_start_time and time.hour <= shoulder_end_time) or (time.hour > shoulder_start_time_2 and time.hour <= shoulder_end_time_2) :
+                    elif (time.hour >= shoulder_start_time and time.hour < shoulder_end_time) or (time.hour >= shoulder_start_time_2 and time.hour < shoulder_end_time_2) :
                         variable_tariff = shoulder_charge
                     else:
                         variable_tariff = offpeak_charge
 
-                # Else assume it's off-peak time
+                # Else assume it's the weekend
                 else:
-                    variable_tariff = offpeak_charge
+                    if (time.hour >= shoulder_start_time and time.hour < shoulder_end_time_2) :
+                        variable_tariff = shoulder_charge
+                    else:
+                        variable_tariff = offpeak_charge
                 # Apply the tariff
                 results.set_participant_variable_charge(time, p.get_id(),variable_tariff * external_grid_import )
 

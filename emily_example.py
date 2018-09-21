@@ -32,7 +32,7 @@ data_dir ='data'
 mynetwork = Network('Byron')
 
 # Name the test you're running
-testname = 't_tariffsolar25'
+testname = '_50solar12_TOU2'
 
 print('About to add participants')
 # Load the participants from a csv
@@ -50,8 +50,8 @@ print('Successfully added battery')
 my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"))
 
 # Define the start and end times of the simulation.
-start = datetime.datetime(year=2016,month=7,day=1,hour=2,minute=30)
-end = datetime.datetime(year=2016,month=7,day=1,hour=4,minute=30)
+start = datetime.datetime(year=2012,month=7,day=1,hour=0,minute=30)     #start time for all data in emily_example
+end = datetime.datetime(year=2013,month=6,day=30,hour=23,minute=30)     #end time for all data in emily_example
 # end =  datetime.datetime(year=2016,month=7,day=30,hour=23) #this is an end time very near the start, good for testing code because we don't do many calculations.
 # end =  datetime.datetime(year=2017,month=4,day=30,hour=23) #this is the total end time for all the data in the byron model
 
