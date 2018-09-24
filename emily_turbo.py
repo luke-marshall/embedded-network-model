@@ -28,7 +28,7 @@ random.seed(9001)
 #  ==================
 data_dir ='data'
 
-def run(random_seed , dictlist, data_dir, participant_csv, lock):
+def run(random_seed , dictlist, data_dir, participant_csv, solar_data, load_data, lock):
 
     print('Good morning!')
     # Directories where input and output data lives.
@@ -46,7 +46,7 @@ def run(random_seed , dictlist, data_dir, participant_csv, lock):
     print('About to add participants')
     # Load the participants from a csv
     # unique_id = mynetwork.add_participants_from_csv_randomise_has_solar(data_dir,"emily_participant_meta_data_EN1.csv", solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
-    unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(lock,dictlist, data_dir,"emily_participant_meta_data_EN1.csv", solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
+    unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(lock, dictlist, data_dir,"emily_participant_meta_data_EN1.csv", solar_data, load_data, solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
 
     # unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(dictlist, solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
     
@@ -57,17 +57,17 @@ def run(random_seed , dictlist, data_dir, participant_csv, lock):
 
     # Create a central battery
     battery_capacity = 0.00000001
-    central_battery = Central_Battery(cap_kWh=battery_capacity, cap_kW=battery_capacity, cycle_eff=0.99, ui_battery_discharge_windows_path=os.path.join(data_dir,"ui_battery_discharge_window_eg.csv"))
+    central_battery = Central_Battery(cap_kWh=battery_capacity, cap_kW=battery_capacity, cycle_eff=0.99, ui_battery_discharge_windows_path=os.path.join(data_dir,"ui_battery_discharge_window_eg.csv"), lock=lock)
     # Add the battery to the network.
     mynetwork.add_central_battery(central_battery)
     print('Successfully added battery')
 
     # Create a 'tariffs' object that stores information and logic about different tariffs.
-    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"))
+    my_tariffs = Tariffs('Test',os.path.join(data_dir,"retail_tariffs.csv"),os.path.join(data_dir,"duos.csv"),os.path.join(data_dir,"tuos.csv"), os.path.join(data_dir,"nuos.csv"), os.path.join(data_dir,"ui_tariffs_eg.csv"), lock)
 
     # Define the start and end times of the simulation.
     start = datetime.datetime(year=2012,month=7,day=1,hour=0,minute=30)     #start time for all data in emily_example
-    end = datetime.datetime(year=2012,month=7,day=2,hour=23,minute=30)     #end time for all data in emily_example
+    end = datetime.datetime(year=2012,month=7,day=1,hour=23,minute=30)     #end time for all data in emily_example
     # end = datetime.datetime(year=2013,month=6,day=30,hour=23,minute=30)     #end time for all data in emily_example
     # end =  datetime.datetime(year=2016,month=7,day=30,hour=23) #this is an end time very near the start, good for testing code because we don't do many calculations.
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23) #this is the total end time for all the data in the byron model
@@ -96,12 +96,17 @@ if __name__ == "__main__":
     #     os.mkdir(os.path.join('output', 'test'))
     data_dir ='data'
     participant_csv = "emily_participant_meta_data_EN1.csv"
+    solar_path = "emily_solar_EN1.csv"
+    load_path = "EN_1f.csv"
+    solar_data = pd.read_csv(os.path.join(data_dir,solar_path),index_col = 'date_time', parse_dates=True, date_parser=util.date_parser)
+    load_data = load_data = pd.read_csv(os.path.join(data_dir,load_path),index_col = 'date_time', parse_dates=False,  date_parser=util.date_parser)
+
     lock = Lock()
     with open(os.path.join(data_dir,participant_csv)) as f:
         reader = csv.DictReader(f, delimiter = ",")
         participants = [line for line in reader]
 
         for i in range(6):
-            t = Thread(target=run, args=(i, participants, data_dir, participant_csv, lock))
+            t = Thread(target=run, args=(i, participants, data_dir, participant_csv, solar_data, load_data, lock))
             t.start()
     # run()

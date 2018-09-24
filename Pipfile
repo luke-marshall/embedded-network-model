@@ -12,6 +12,8 @@ pendulum = "*"
 Flask = "*"
 DateTime = "*"
 Cython = "==0.26.1"
+lazy = "*"
+humanhash = "*"
 
 [dev-packages]
 

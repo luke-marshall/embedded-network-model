@@ -3,13 +3,16 @@ import pandas as pd
 import datetime
 
 class Tariffs :
-    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path, nuos_data_path, ui_tariff_data_path):
+    def __init__(self, scheme_name, retail_tariff_data_path, duos_data_path, tuos_data_path, nuos_data_path, ui_tariff_data_path, lock):
         self.scheme_name = scheme_name
         self.retail_tariff_data_path = retail_tariff_data_path
         self.duos_data_path = duos_data_path
         self.tuos_data_path = tuos_data_path
         self.nuos_data_path = nuos_data_path
         # Get tariff data (note tuos not considered as yet)
+        
+        lock.acquire()
+        
         self.retail_tariff_data = pd.read_csv(retail_tariff_data_path, index_col = ['offer_name'])
         self.duos_tariff_data = pd.read_csv(duos_data_path, index_col = ['offer_name'])
         self.tuos_tariff_data = pd.read_csv(tuos_data_path, index_col = ['offer_name'])
@@ -18,6 +21,8 @@ class Tariffs :
         # TODO - For testing ahead of integration with UI
         self.ui_tariff_data_path = ui_tariff_data_path
         self.ui_tariff_data = pd.read_csv(ui_tariff_data_path, index_col = ['gen_type'])
+        lock.release()
+        
         # Extract individual charges to reduce code below
         self.local_solar_energy = self.ui_tariff_data.loc['local_solar','energy_charge']
         self.local_solar_retail = self.ui_tariff_data.loc['local_solar','retail_charge']
