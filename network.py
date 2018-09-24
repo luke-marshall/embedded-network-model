@@ -110,7 +110,7 @@ class Network:
 
 
 
-    def add_participants_from_dictlist_randomise_has_solar(self, dictlist, data_dir, participant_csv, solar_participant_fraction = 0.5, random_seed=1000):
+    def add_participants_from_dictlist_randomise_has_solar(self, lock,  dictlist, data_dir, participant_csv, solar_participant_fraction = 0.5, random_seed=1000):
         
         participants = []
         for line in dictlist: 
@@ -124,7 +124,8 @@ class Network:
                 retailer=line['retailer'],
                 solar_path=os.path.join(data_dir,line['solar_path']),
                 load_path=os.path.join(data_dir,line['load_path']),
-                solar_capacity=float(line['solar_capacity'])
+                solar_capacity=float(line['solar_capacity']),
+                lock=lock,
             )
             participants.append(participant)
 

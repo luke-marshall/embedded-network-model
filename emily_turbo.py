@@ -11,7 +11,7 @@ import util
 from results import Results
 import energy_sim
 import financial_sim
-from threading import Thread
+from threading import Thread, Lock
 
 # Required 3rd party libraries
 import datetime
@@ -28,7 +28,7 @@ random.seed(9001)
 #  ==================
 data_dir ='data'
 
-def run(random_seed , dictlist, data_dir, participant_csv):
+def run(random_seed , dictlist, data_dir, participant_csv, lock):
 
     print('Good morning!')
     # Directories where input and output data lives.
@@ -39,14 +39,14 @@ def run(random_seed , dictlist, data_dir, participant_csv):
     mynetwork = Network('Byron')
 
     # Name the test you're running
-    testname = '_25solar_flat_'
+    testname = '_275olar_flat_'
 
-    solar_participant_fraction=0.25
+    solar_participant_fraction=0.75
 
     print('About to add participants')
     # Load the participants from a csv
     # unique_id = mynetwork.add_participants_from_csv_randomise_has_solar(data_dir,"emily_participant_meta_data_EN1.csv", solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
-    unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(dictlist, data_dir,"emily_participant_meta_data_EN1.csv", solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
+    unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(lock,dictlist, data_dir,"emily_participant_meta_data_EN1.csv", solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
 
     # unique_id = mynetwork.add_participants_from_dictlist_randomise_has_solar(dictlist, solar_participant_fraction=solar_participant_fraction, random_seed=random_seed)
     
@@ -67,7 +67,8 @@ def run(random_seed , dictlist, data_dir, participant_csv):
 
     # Define the start and end times of the simulation.
     start = datetime.datetime(year=2012,month=7,day=1,hour=0,minute=30)     #start time for all data in emily_example
-    end = datetime.datetime(year=2012,month=7,day=1,hour=23,minute=30)     #end time for all data in emily_example
+    end = datetime.datetime(year=2012,month=7,day=2,hour=23,minute=30)     #end time for all data in emily_example
+    # end = datetime.datetime(year=2013,month=6,day=30,hour=23,minute=30)     #end time for all data in emily_example
     # end =  datetime.datetime(year=2016,month=7,day=30,hour=23) #this is an end time very near the start, good for testing code because we don't do many calculations.
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23) #this is the total end time for all the data in the byron model
 
@@ -95,11 +96,12 @@ if __name__ == "__main__":
     #     os.mkdir(os.path.join('output', 'test'))
     data_dir ='data'
     participant_csv = "emily_participant_meta_data_EN1.csv"
+    lock = Lock()
     with open(os.path.join(data_dir,participant_csv)) as f:
         reader = csv.DictReader(f, delimiter = ",")
         participants = [line for line in reader]
 
         for i in range(6):
-            t = Thread(target=run, args=(i, participants, data_dir, participant_csv))
+            t = Thread(target=run, args=(i, participants, data_dir, participant_csv, lock))
             t.start()
     # run()

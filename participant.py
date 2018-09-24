@@ -51,13 +51,14 @@ class CSV_Participant_OLD(Participant):
 
 
 class CSV_Participant(Participant):
-    def __init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer, solar_path, load_path, solar_capacity):
+    def __init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer, solar_path, load_path, solar_capacity, lock):
         Participant.__init__(self, participant_id, participant_type, retail_tariff_type, network_tariff_type, retailer)
         self.solar_path = solar_path
         self.load_path = load_path
         self.solar_path = solar_path
         self.pid = participant_id
         self.solar_capacity = solar_capacity
+        self.lock = lock
         
 
         if solar_capacity == 0:
@@ -67,12 +68,17 @@ class CSV_Participant(Participant):
              
     @lazy
     def solar_data(self):
+        self.lock.acquire()
+        
         solar_data = pd.read_csv(self.solar_path,index_col = 'date_time', parse_dates=True, date_parser=util.date_parser)
+        self.lock.release()
         return solar_data[self.pid] * self.solar_capacity
 
     @lazy
     def load_data(self):
+        self.lock.acquire()
         load_data = pd.read_csv(self.load_path,index_col = 'date_time', parse_dates=False,  date_parser=util.date_parser)
+        self.lock.release()
         return load_data[self.pid]
 
     def calc_net_export(self, date_time, interval_min):

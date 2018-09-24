@@ -27,9 +27,10 @@ class Battery:
         return self.num_cycles
 
 class Central_Battery(Battery):
-    def __init__(self, cap_kWh, cap_kW, cycle_eff, ui_battery_discharge_windows_path):
+    def __init__(self, cap_kWh, cap_kW, cycle_eff, ui_battery_discharge_windows_path, lock):
         Battery.__init__(self, cap_kWh, cap_kW, cycle_eff)
         self.ui_battery_discharge_windows_path = ui_battery_discharge_windows_path
+        
         self.discharge_times_data = pd.read_csv(ui_battery_discharge_windows_path)
         # Get pandas series containing all allowed discharge hours
         # Note - end time is NOT inclusive (i.e. if end time is 10 then allowed time period will be up to and including 9)
