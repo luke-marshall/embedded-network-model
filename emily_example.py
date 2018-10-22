@@ -32,7 +32,7 @@ data_dir ='data'
 mynetwork = Network('Byron')
 
 # Name the test you're running
-testname = '_50solar12_TOU2'
+testname = '_25solar_flat'
 
 print('About to add participants')
 # Load the participants from a csv

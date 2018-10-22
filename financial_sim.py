@@ -14,6 +14,7 @@ import numpy as np
 import pprint
 import csv
 import os
+from datetime import date
 
 TIME_PERIOD_LENGTH_MINS = 30
 
@@ -126,6 +127,77 @@ def simulate(time_periods, mynetwork, my_tariffs, results, status_callback=None)
                         variable_tariff = offpeak_charge
                 # Apply the tariff
                 results.set_participant_variable_charge(time, p.get_id(),variable_tariff * external_grid_import )
+            
+            if retail_tariff_type == 'Seasonal TOU':
+                peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, peak_start_time_summer, peak_end_time_summer, peak_start_time_2_summer, peak_end_time_2_summer, shoulder_start_time_summer, shoulder_end_time_summer, shoulder_start_time_2_summer, shoulder_end_time_2_summer, peak_start_time_autsp, peak_end_time_autsp, peak_start_time_2_autsp, peak_end_time_2_autsp, shoulder_start_time_autsp, shoulder_end_time_autsp, shoulder_start_time_2_autsp, shoulder_end_time_2_autsp = my_tariffs.get_variable_tariff(time,retail_tariff_type)
+
+                if (date.month >=6 and date.month <=8):      #it's winter
+                    # If the TOU periods apply all days and not just weekdays then the flag will be zero
+                    if tou_weekday_only_flag == 0 :
+                        # Check for whether it's a peak time
+                        if (time.hour >= peak_start_time and time.hour < peak_end_time) or (time.hour >= peak_start_time_2 and time.hour < peak_end_time_2) :
+                            variable_tariff = peak_charge
+                        # If not, check whether it's shoulder time
+                        elif (time.hour >= shoulder_start_time and time.hour < shoulder_end_time) or (time.hour >= shoulder_start_time_2 and time.hour < shoulder_end_time_2) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge
+
+                    # In the case where PEAK TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
+                    elif tou_weekday_only_flag == 1 and (time.weekday() >= 0 and time.weekday() <=4) :
+                        if (time.hour >= peak_start_time and time.hour < peak_end_time) or (time.hour >= peak_start_time_2 and time.hour < peak_end_time_2) :
+                            variable_tariff = peak_charge
+                        elif (time.hour >= shoulder_start_time and time.hour < shoulder_end_time) or (time.hour >= shoulder_start_time_2 and time.hour < shoulder_end_time_2) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge
+
+                    # Else assume it's the weekend
+                    else:
+                        if (time.hour >= shoulder_start_time and time.hour < shoulder_end_time_2) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge
+
+                elif (date.month >=1 and date.month <=3) or (date.month >=11 and date.month <=12):   #it's summer
+                    # If the TOU periods apply all days and not just weekdays then the flag will be zero
+                    if tou_weekday_only_flag == 0 :
+                        # Check for whether it's a peak time
+                        if (time.hour >= peak_start_time_summer and time.hour < peak_end_time_summer) or (time.hour >= peak_start_time_2_summer and time.hour < peak_end_time_2_summer) :
+                            variable_tariff = peak_charge
+                        # If not, check whether it's shoulder time
+                        elif (time.hour >= shoulder_start_time_summer and time.hour < shoulder_end_time_summer) or (time.hour >= shoulder_start_time_2_summer and time.hour < shoulder_end_time_2_summer) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge
+
+                    # In the case where PEAK TOU periods only apply on weekdays then check for weekdays and apply the same logic as above.
+                    elif tou_weekday_only_flag == 1 and (time.weekday() >= 0 and time.weekday() <=4) :
+                        if (time.hour >= peak_start_time_summer and time.hour < peak_end_time_summer) or (time.hour >= peak_start_time_2_summer and time.hour < peak_end_time_2_summer) :
+                            variable_tariff = peak_charge
+                        elif (time.hour >= shoulder_start_time_summer and time.hour < shoulder_end_time_summer) or (time.hour >= shoulder_start_time_2_summer and time.hour < shoulder_end_time_2_summer) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge
+
+                    # Else assume it's the weekend
+                    else:
+                        if (time.hour >= shoulder_start_time_summer and time.hour < shoulder_end_time_2_summer) :
+                            variable_tariff = shoulder_charge
+                        else:
+                            variable_tariff = offpeak_charge         
+
+                else :   #it's autumn or spring
+                        # Check whether it's shoulder time
+                    if (time.hour >= shoulder_start_time_autsp and time.hour < shoulder_end_time_autsp) or (time.hour >= shoulder_start_time_2_autsp and time.hour < shoulder_end_time_2_autsp) :
+                        variable_tariff = shoulder_charge
+                    else:
+                        variable_tariff = offpeak_charge
+
+
+                # Apply the tariff
+                results.set_participant_variable_charge(time, p.get_id(),variable_tariff * external_grid_import )    
+
 
             # Controlled Load and Flat Tariffs ---------------
             # The controlled load tariffs and the flat tariff will be applied simply as the tariff times by the volume of electricity consumed, so the same calculation is applied.

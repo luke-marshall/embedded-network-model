@@ -60,6 +60,23 @@ class Tariffs :
         block_2_volume = self.retail_tariff_data.loc[retail_tariff_type,'block_2_volume']
         demand_charge = self.retail_tariff_data.loc[retail_tariff_type,'demand']
         tou_weekday_only_flag = self.retail_tariff_data.loc[retail_tariff_type, 'tou_weekday_only_flag']
+        peak_start_time_summer	= self.retail_tariff_data.loc[retail_tariff_type,'peak_start_time_summer']
+        peak_end_time_summer = self.retail_tariff_data.loc[retail_tariff_type,'peak_end_time_summer']
+        peak_start_time_2_summer = self.retail_tariff_data.loc[retail_tariff_type,'peak_start_time_2_summer']
+        peak_end_time_2_summer	= self.retail_tariff_data.loc[retail_tariff_type,'peak_end_time_2_summer']
+        shoulder_start_time_summer	= self.retail_tariff_data.loc[retail_tariff_type,'shoulder_start_time_summer']
+        shoulder_end_time_summer = self.retail_tariff_data.loc[retail_tariff_type,'shoulder_end_time_summer']
+        shoulder_start_time_2_summer = self.retail_tariff_data.loc[retail_tariff_type,'shoulder_start_time_2_summer']
+        shoulder_end_time_2_summer	= self.retail_tariff_data.loc[retail_tariff_type,'shoulder_end_time_2_summer']
+        peak_start_time_autsp	= self.retail_tariff_data.loc[retail_tariff_type,'peak_start_time_autsp']
+        peak_end_time_autsp = self.retail_tariff_data.loc[retail_tariff_type,'peak_end_time_autsp']
+        peak_start_time_2_autsp = self.retail_tariff_data.loc[retail_tariff_type,'peak_start_time_2_autsp']
+        peak_end_time_2_autsp	= self.retail_tariff_data.loc[retail_tariff_type,'peak_end_time_2_autsp']
+        shoulder_start_time_autsp	= self.retail_tariff_data.loc[retail_tariff_type,'shoulder_start_time_autsp']
+        shoulder_end_time_autsp = self.retail_tariff_data.loc[retail_tariff_type,'shoulder_end_time_autsp']
+        shoulder_start_time_2_autsp = self.retail_tariff_data.loc[retail_tariff_type,'shoulder_start_time_2_autsp']
+        shoulder_end_time_2_autsp	= self.retail_tariff_data.loc[retail_tariff_type,'shoulder_end_time_2_autsp']
+
 
         if retail_tariff_type == 'Business Anytime':
             variable_tariff = (block_1_charge, block_2_charge, block_1_volume)
@@ -71,6 +88,8 @@ class Tariffs :
             variable_tariff = (controlled_load)
         elif retail_tariff_type == 'flat_charge':
             variable_tariff = (flat_charge) 
+        elif retail_tariff_type == 'Seasonal TOU':
+            variable_tariff = (peak_charge, shoulder_charge, offpeak_charge, peak_start_time, peak_end_time, peak_start_time_2, peak_end_time_2, shoulder_start_time, shoulder_end_time, shoulder_start_time_2, shoulder_end_time_2, tou_weekday_only_flag, peak_start_time_summer, peak_end_time_summer, peak_start_time_2_summer, peak_end_time_2_summer, shoulder_start_time_summer, shoulder_end_time_summer, shoulder_start_time_2_summer, shoulder_end_time_2_summer, peak_start_time_autsp, peak_end_time_autsp, peak_start_time_2_autsp, peak_end_time_2_autsp, shoulder_start_time_autsp, shoulder_end_time_autsp, shoulder_start_time_2_autsp, shoulder_end_time_2_autsp)
         else:
             raise ValueError('Retail tariff type not known:'+str(retail_tariff_type))
 

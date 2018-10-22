@@ -1,6 +1,7 @@
-ref,retailer,offer_name,type,daily_charge,flat_charge,peak_charge,shoulder_charge,offpeak_charge,block_1_charge,block_2_charge,controlled_load,peak_start_time,peak_end_time,peak_start_time_2,peak_end_time_2,shoulder_start_time,shoulder_end_time,shoulder_start_time_2,shoulder_end_time_2,block_1_volume,block_2_volume,demand,demand_units,solar_tariff_1,solar_cap_1,solar_tariff_2,tou_weekday_only_flag
-1,Enova,Business Anytime,Flat,0.629068,0.219538,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.12,10,0.06,0
-2,Enova,Business TOU,TOU,0.721072,0,0.403172,0.210936,0.128656,0,0,0,17,22,0,0,7,17,0,0,0,0,0,0,0.12,10,0.06,1
-3,Enova,Controlled Load 1,CL,0.125,0,0,0,0,0,0,0.117,0,0,0,0,0,0,0,0,0,0,0,0,0.1,10,0.06,0
-4,Enova,Controlled Load 2,CL,0.125,0,0,0,0,0,0,0.165,0,0,0,0,0,0,0,0,0,0,0,0,0.1,10,0.06,0
-,,flat_charge,Flat,0.629068,0.219538,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.12,10,0.06,0
+ref,retailer,offer_name,type,daily_charge,flat_charge,peak_charge,shoulder_charge,offpeak_charge,block_1_charge,block_2_charge,controlled_load,peak_start_time,peak_end_time,peak_start_time_2,peak_end_time_2,shoulder_start_time,shoulder_end_time,shoulder_start_time_2,shoulder_end_time_2,block_1_volume,block_2_volume,demand,demand_units,solar_tariff_1,solar_cap_1,solar_tariff_2,tou_weekday_only_flag,peak_start_time_summer,peak_end_time_summer,peak_start_time_2_summer,peak_end_time_2_summer,shoulder_start_time_summer,shoulder_end_time_summer,shoulder_start_time_2_summer,shoulder_end_time_2_summer,peak_start_time_autsp,peak_end_time_autsp,peak_start_time_2_autsp,peak_end_time_2_autsp,shoulder_start_time_autsp,shoulder_end_time_autsp,shoulder_start_time_2_autsp,shoulder_end_time_2_autsp
+1,Enova,Business Anytime,Flat,0.629068,0.219538,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.12,10,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Enova,Business TOU,TOU,0.90134,0,0.443489,0.23203,0.141522,0,0,0,17,22,0,0,7,17,0,0,0,0,0,0,0.125,20,0.06,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Enova,Controlled Load 1,CL,0.125,0,0,0,0,0,0,0.117,0,0,0,0,0,0,0,0,0,0,0,0,0.1,10,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Enova,Controlled Load 2,CL,0.125,0,0,0,0,0,0,0.165,0,0,0,0,0,0,0,0,0,0,0,0,0.1,10,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,,flat_charge,Flat,0.786335,0.241492,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.125,10,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,,Seasonal TOU,TOU,0.90134,0,0.443489,0.23203,0.141522,0,0,0,17,21,0,0,7,17,21,22,0,0,0,0,0.125,20,0.06,1,14,20,0,0,7,14,20,22,0,0,0,0,7,22,0,0

@@ -39,7 +39,7 @@ def run(random_seed , dictlist, data_dir, participant_csv, solar_data, load_data
     mynetwork = Network('Byron')
 
     # Name the test you're running
-    testname = '_275olar_flat_'
+    testname = '_75solar_flat_'
 
     solar_participant_fraction=0.75
 
@@ -67,7 +67,7 @@ def run(random_seed , dictlist, data_dir, participant_csv, solar_data, load_data
 
     # Define the start and end times of the simulation.
     start = datetime.datetime(year=2012,month=7,day=1,hour=0,minute=30)     #start time for all data in emily_example
-    end = datetime.datetime(year=2012,month=7,day=1,hour=23,minute=30)     #end time for all data in emily_example
+    end = datetime.datetime(year=2012,month=7,day=1,hour=12,minute=30)     #end time for all data in emily_example
     # end = datetime.datetime(year=2013,month=6,day=30,hour=23,minute=30)     #end time for all data in emily_example
     # end =  datetime.datetime(year=2016,month=7,day=30,hour=23) #this is an end time very near the start, good for testing code because we don't do many calculations.
     # end =  datetime.datetime(year=2017,month=4,day=30,hour=23) #this is the total end time for all the data in the byron model
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         reader = csv.DictReader(f, delimiter = ",")
         participants = [line for line in reader]
 
-        for i in range(6):
+        for i in range(2):
             t = Thread(target=run, args=(i, participants, data_dir, participant_csv, solar_data, load_data, lock))
             t.start()
     # run()

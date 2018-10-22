@@ -113,9 +113,33 @@ class Network:
     def add_participants_from_dictlist_randomise_has_solar(self, lock,  dictlist, data_dir, participant_csv, solar_data, load_data, solar_participant_fraction = 0.5, random_seed=1000):
         
         participants = []
-        for line in dictlist: 
+
+        num_participants = len(dictlist)
+
+        # Make an array of true/false whether a participant has solar. 
+        num_solar_participants = int(round(float(num_participants) * solar_participant_fraction))
+        has_solar = []
+        
+        for counter in range(num_participants):
+            if counter < num_solar_participants:
+                has_solar.append(True)
+            else:
+                has_solar.append(False)
+
+        # Jumble the list
+        local_random = random.Random()
+        local_random.seed(random_seed)
+        local_random.shuffle(has_solar)
+
+
+
+        for counter, line in enumerate(dictlist): 
             # print line
             print(line['participant_id'])
+            solar_capacity = float(line['solar_capacity'])
+            if not has_solar[counter]:
+                solar_capacity = 0
+
             participant = CSV_Participant(
                 participant_id=line['participant_id'],
                 participant_type=line['participant_type'],
@@ -126,32 +150,11 @@ class Network:
                 load_path=os.path.join(data_dir,line['load_path']),
                 solar_data = solar_data,
                 load_data = load_data,
-                solar_capacity=float(line['solar_capacity']),
+                solar_capacity=solar_capacity,
                 lock=lock,
             )
             participants.append(participant)
 
-        # Make an array of true/false whether a participant has solar. 
-        num_solar_participants = int(round(float(len(participants)) * solar_participant_fraction))
-        has_solar = []
-        counter = 0
-        for participant in participants:
-            if counter < num_solar_participants:
-                has_solar.append(True)
-            else:
-                has_solar.append(False)
-            counter += 1
-        # Jumble the list
-        local_random = random.Random()
-        local_random.seed(random_seed)
-        local_random.shuffle(has_solar)
-        
-        # set participant's solar cap to zero if need be. 
-        counter = 0
-        for participant in participants:
-            if not has_solar[counter]:
-                participant.solar_capacity = 0
-            counter += 1
 
         # Add to the list of participants
         for participant in participants:
@@ -162,5 +165,3 @@ class Network:
         digest = base64.b16encode(digest)
         unique_id = humanhash.humanize(digest, words=2)
         return unique_id
-    
-        
