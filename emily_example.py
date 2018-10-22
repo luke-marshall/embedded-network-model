@@ -32,7 +32,7 @@ data_dir ='data'
 mynetwork = Network('Byron')
 
 # Name the test you're running
-testname = '_50solar12_TOU2'
+testname = '_100solar12_flat_30batt'
 
 print('About to add participants')
 # Load the participants from a csv
@@ -40,8 +40,8 @@ mynetwork.add_participants_from_csv(data_dir,"emily_participant_meta_data_EN1.cs
 print('Successfully added participants')
 
 # Create a central battery
-battery_capacity = 0.00000001
-central_battery = Central_Battery(cap_kWh=battery_capacity, cap_kW=battery_capacity, cycle_eff=0.99, ui_battery_discharge_windows_path=os.path.join(data_dir,"ui_battery_discharge_window_eg.csv"))
+battery_capacity = 405
+central_battery = Central_Battery(cap_kWh=battery_capacity, cap_kW=battery_capacity, cycle_eff=0.9, ui_battery_discharge_windows_path=os.path.join(data_dir,"ui_battery_discharge_window_eg.csv"))
 # Add the battery to the network.
 mynetwork.add_central_battery(central_battery)
 print('Successfully added battery')
